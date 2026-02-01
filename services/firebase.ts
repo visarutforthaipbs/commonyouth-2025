@@ -1,11 +1,8 @@
 
 import { initializeApp } from 'firebase/app';
-import * as firebaseAuth from 'firebase/auth';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-
-// Workaround for TS import errors: cast the module to any to access members
-const { getAuth, GoogleAuthProvider } = firebaseAuth as any;
 
 // Your web app's Firebase configuration
 const firebaseConfig = {

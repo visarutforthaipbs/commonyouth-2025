@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { Link } from 'react-router-dom';
 import { Group } from '../types';
 import L from 'leaflet';
 
@@ -84,7 +85,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ groups, selectedId, onSelec
   const selectedGroup = groups.find(g => g.id === selectedId);
 
   return (
-    <div className="h-full w-full rounded-xl overflow-hidden border-2 border-brand-darkGreen shadow-retro relative z-0">
+    <div className="h-full w-full rounded-xl overflow-hidden border-2 border-brand-obsidian shadow-retro relative z-0">
       <MapContainer 
         center={defaultCenter} 
         zoom={6} 
@@ -109,13 +110,25 @@ const MapComponent: React.FC<MapComponentProps> = ({ groups, selectedId, onSelec
           >
             <Popup className="font-sans">
               <div className="min-w-[150px]">
-                <h3 className="font-bold text-brand-darkGreen">{group.name}</h3>
-                <p className="text-xs text-brand-earth">{group.province}</p>
+                <h3 className="font-bold text-brand-obsidian">
+                  {group.name} {group.isHidden && <span className="text-red-500 text-xs">(ซ่อน)</span>}
+                </h3>
+                <p className="text-xs text-brand-earth">
+                  {group.tambon && `${group.tambon}, `}
+                  {group.amphoe && `${group.amphoe}, `}
+                  {group.province}
+                </p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {group.issues.slice(0,2).map(i => (
-                    <span key={i} className="text-[10px] bg-brand-cream px-1 rounded border border-brand-gray">{i}</span>
+                    <span key={i} className="text-[10px] bg-brand-linen px-1 rounded border border-brand-gray">{i}</span>
                   ))}
                 </div>
+                <Link 
+                  to={`/group/${group.id}`} 
+                  className="mt-3 block text-center text-xs bg-brand-darkGreen text-white py-1 px-2 rounded hover:bg-brand-green transition-colors"
+                >
+                  ดูรายละเอียด
+                </Link>
               </div>
             </Popup>
           </Marker>

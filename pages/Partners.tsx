@@ -17,7 +17,7 @@ const Partners: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="text-center mb-16">
-        <h1 className="text-4xl font-bold text-brand-darkGreen mb-4">ภาคีเครือข่าย</h1>
+        <h1 className="text-4xl font-bold text-brand-obsidian mb-4">ภาคีเครือข่าย</h1>
         <p className="text-brand-earth max-w-2xl mx-auto">
           เราทำงานร่วมกับองค์กรชั้นนำระดับประเทศและระดับโลกเพื่อขับเคลื่อนการเปลี่ยนแปลง
         </p>
@@ -27,17 +27,17 @@ const Partners: React.FC = () => {
         {PARTNERS.map((partner) => (
           <div 
             key={partner.id} 
-            className="group bg-white p-8 rounded-2xl border-2 border-brand-gray hover:border-brand-blue hover:shadow-retro transition-all cursor-pointer flex flex-col items-center text-center"
+            className="group bg-white p-8 rounded-2xl border-2 border-brand-obsidian hover:border-brand-bud hover:shadow-retro transition-all cursor-pointer flex flex-col items-center text-center"
           >
             {/* Logo Placeholder */}
-            <div className="w-24 h-24 mb-6 bg-brand-cream rounded-full flex items-center justify-center border border-brand-gray group-hover:scale-110 transition-transform">
-              <span className="text-2xl font-bold text-brand-darkGreen opacity-50">{partner.name.charAt(0)}</span>
+            <div className="w-24 h-24 mb-6 bg-brand-linen rounded-full flex items-center justify-center border-2 border-brand-obsidian group-hover:scale-110 transition-transform">
+              <span className="text-2xl font-bold text-brand-obsidian opacity-50">{partner.name.charAt(0)}</span>
             </div>
             
-            <h3 className="font-bold text-brand-darkGreen text-lg mb-2">{partner.name}</h3>
-            <p className="text-xs text-brand-earth font-ui mb-4 flex-grow">{partner.desc}</p>
+            <h3 className="font-bold text-brand-obsidian text-lg mb-2">{partner.name}</h3>
+            <p className="text-xs text-brand-earth mb-4 flex-grow">{partner.desc}</p>
             
-            <div className="text-brand-blue opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="text-brand-ocean opacity-0 group-hover:opacity-100 transition-opacity">
               <ExternalLink className="w-5 h-5" />
             </div>
           </div>
@@ -45,12 +45,12 @@ const Partners: React.FC = () => {
       </div>
 
       {/* Call to Action */}
-      <div className="mt-20 bg-brand-blue/10 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between border border-brand-blue/20">
+      <div className="mt-20 bg-brand-mist/30 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between border-2 border-brand-ocean/20">
         <div className="mb-6 md:mb-0 text-center md:text-left">
-          <h3 className="text-2xl font-bold text-brand-darkGreen mb-2">สนใจร่วมเป็นภาคีเครือข่าย?</h3>
+          <h3 className="text-2xl font-bold text-brand-obsidian mb-2">สนใจร่วมเป็นภาคีเครือข่าย?</h3>
           <p className="text-brand-earth">ร่วมสนับสนุนทรัพยากร ความรู้ และโอกาสให้กับเยาวชนไทย</p>
         </div>
-        <button className="bg-brand-blue text-white px-8 py-3 rounded-xl font-bold shadow-sm hover:bg-brand-darkGreen transition-colors">
+        <button className="bg-brand-obsidian text-brand-linen px-8 py-3 rounded-xl font-bold shadow-retro hover:shadow-none hover:translate-y-1 transition-all">
           ติดต่อฝ่ายพันธมิตร
         </button>
       </div>

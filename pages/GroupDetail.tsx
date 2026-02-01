@@ -43,16 +43,16 @@ const GroupDetail: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen">
-      <button onClick={() => navigate(-1)} className="mb-6 flex items-center text-brand-earth hover:text-brand-green">
+      <button onClick={() => navigate(-1)} className="mb-6 flex items-center text-brand-earth hover:text-brand-bud">
         <ArrowLeft className="w-4 h-4 mr-2" /> ย้อนกลับ
       </button>
 
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-brand-gray mb-12">
+      <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-brand-obsidian mb-12">
         <div className="h-64 md:h-96 relative">
           <img src={group.imageUrl} alt={group.name} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           <div className="absolute bottom-6 left-6 text-white">
-            <span className="bg-brand-green px-3 py-1 rounded-full text-xs font-bold mb-2 inline-block">{group.province}</span>
+            <span className="bg-brand-bud text-brand-obsidian px-3 py-1 rounded-full text-xs font-bold mb-2 inline-block">{group.province}</span>
             <h1 className="text-3xl md:text-5xl font-bold">{group.name}</h1>
           </div>
         </div>
@@ -60,16 +60,16 @@ const GroupDetail: React.FC = () => {
         <div className="p-8 grid md:grid-cols-3 gap-8">
           <div className="md:col-span-2 space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-brand-darkGreen mb-3">รายละเอียด</h3>
-              <p className="text-brand-earth leading-relaxed font-ui text-lg">{group.description}</p>
+              <h3 className="text-xl font-bold text-brand-obsidian mb-3">รายละเอียด</h3>
+              <p className="text-brand-earth leading-relaxed text-lg">{group.description}</p>
             </div>
             
             <div>
-              <h3 className="text-xl font-bold text-brand-darkGreen mb-3">ประเด็นที่ขับเคลื่อน</h3>
+              <h3 className="text-xl font-bold text-brand-obsidian mb-3">ประเด็นที่ขับเคลื่อน</h3>
               <div className="flex flex-wrap gap-2">
                 {group.issues.map(issue => (
-                  <span key={issue} className="bg-brand-cream border border-brand-green/30 text-brand-darkGreen px-3 py-1 rounded-full text-sm flex items-center">
-                    <Tag className="w-3 h-3 mr-2 text-brand-green" /> {issue}
+                  <span key={issue} className="bg-brand-linen border-2 border-brand-bud/30 text-brand-obsidian px-3 py-1 rounded-full text-sm flex items-center">
+                    <Tag className="w-3 h-3 mr-2 text-brand-bud" /> {issue}
                   </span>
                 ))}
               </div>
@@ -77,15 +77,15 @@ const GroupDetail: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-brand-cream p-6 rounded-xl border border-brand-gray">
-              <h3 className="font-bold text-brand-darkGreen mb-4">ข้อมูลติดต่อ</h3>
+            <div className="bg-brand-linen p-6 rounded-xl border-2 border-brand-obsidian">
+              <h3 className="font-bold text-brand-obsidian mb-4">ข้อมูลติดต่อ</h3>
               <div className="space-y-3">
                 <div className="flex items-center text-brand-earth">
-                  <Mail className="w-5 h-5 mr-3 text-brand-salmon" />
+                  <Mail className="w-5 h-5 mr-3 text-brand-orange" />
                   <a href={`mailto:${group.contact}`} className="hover:underline truncate">{group.contact}</a>
                 </div>
                 <div className="flex items-center text-brand-earth">
-                  <MapPin className="w-5 h-5 mr-3 text-brand-blue" />
+                  <MapPin className="w-5 h-5 mr-3 text-brand-ocean" />
                   <span>{group.province}</span>
                 </div>
               </div>
@@ -93,7 +93,7 @@ const GroupDetail: React.FC = () => {
 
             <button 
               onClick={() => navigate('/map', { state: { selectedGroupId: group.id } })}
-              className="w-full py-3 bg-brand-darkGreen text-white rounded-xl font-bold shadow-retro hover:shadow-none hover:translate-y-1 transition-all flex items-center justify-center"
+              className="w-full py-3 bg-brand-obsidian text-brand-linen rounded-xl font-bold shadow-retro hover:shadow-none hover:translate-y-1 transition-all flex items-center justify-center"
             >
               <Globe className="w-5 h-5 mr-2" /> ดูในแผนที่
             </button>
@@ -103,27 +103,27 @@ const GroupDetail: React.FC = () => {
 
       {/* Activities Section */}
       <div className="mb-12">
-         <h2 className="text-2xl font-bold text-brand-darkGreen mb-6 flex items-center">
-             <Calendar className="w-6 h-6 mr-2 text-brand-salmon" /> 
+         <h2 className="text-2xl font-bold text-brand-obsidian mb-6 flex items-center">
+             <Calendar className="w-6 h-6 mr-2 text-brand-orange" /> 
              กิจกรรมเร็วๆ นี้
          </h2>
          
          {activities.length > 0 ? (
              <div className="grid md:grid-cols-2 gap-6">
                  {activities.map(activity => (
-                     <div key={activity.id} className="bg-white rounded-xl border border-brand-gray hover:border-brand-green transition-colors overflow-hidden flex shadow-sm h-40">
+                     <div key={activity.id} className="bg-white rounded-xl border border-brand-gray hover:border-brand-bud transition-colors overflow-hidden flex shadow-sm h-40">
                          {/* Date Box */}
-                         <div className="w-24 bg-brand-cream border-r border-brand-gray flex flex-col items-center justify-center p-2 shrink-0 text-center">
-                             <span className="text-xs font-bold text-brand-salmon uppercase">{formatMonthThai(activity.date)}</span>
-                             <span className="text-3xl font-bold text-brand-darkGreen">{formatDay(activity.date)}</span>
+                         <div className="w-24 bg-brand-linen border-r border-brand-gray flex flex-col items-center justify-center p-2 shrink-0 text-center">
+                             <span className="text-xs font-bold text-brand-orange uppercase">{formatMonthThai(activity.date)}</span>
+                             <span className="text-3xl font-bold text-brand-obsidian">{formatDay(activity.date)}</span>
                          </div>
                          
                          {/* Info */}
                          <div className="p-4 flex flex-col justify-center flex-grow">
                              <div className="flex justify-between items-start mb-1">
                                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md mb-2 inline-block ${
-                                     activity.status === 'Open' ? 'bg-brand-green text-white' : 
-                                     activity.status === 'Closing Soon' ? 'bg-brand-salmon text-white' : 'bg-gray-200 text-gray-600'
+                                     activity.status === 'Open' ? 'bg-brand-bud text-brand-obsidian' : 
+                                     activity.status === 'Closing Soon' ? 'bg-brand-orange text-white' : 'bg-brand-gray text-brand-earth'
                                  }`}>
                                      {activity.status}
                                  </span>

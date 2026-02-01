@@ -5,6 +5,7 @@ export interface User {
   name: string;
   profileImage?: string;
   bio?: string;
+  role?: 'admin' | 'user'; 
 }
 
 export interface Coordinates {
@@ -17,12 +18,15 @@ export interface Group {
   ownerId: string;
   name: string;
   province: string;
+  amphoe?: string;
+  tambon?: string;
   coordinates: Coordinates;
   issues: string[];
   description: string;
   contact: string;
   imageUrl: string;
   createdAt: string;
+  isHidden?: boolean;
 }
 
 export interface Activity {

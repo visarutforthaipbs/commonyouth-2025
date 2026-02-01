@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../services/authContext';
 import { apiService } from '../services/api';
 import { ISSUES, PROVINCES, Group } from '../types';
+import { THAI_LOCATIONS, getCoordinates } from '../services/thai-data';
 import { Upload, CheckCircle, MapPin, Edit2, PlusCircle, User as UserIcon, AlertCircle, Image as ImageIcon, X, FileImage, Trash2, AlertTriangle } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -39,9 +40,11 @@ const Dashboard: React.FC = () => {
   // Group Form State
   const initialFormState = {
     name: '',
-    province: PROVINCES[0],
-    lat: '13.7563',
-    lng: '100.5018',
+    province: THAI_LOCATIONS[0].name,
+    amphoe: '',
+    tambon: '',
+    lat: THAI_LOCATIONS[0].coordinates.lat.toString(),
+    lng: THAI_LOCATIONS[0].coordinates.lng.toString(),
     description: '',
     contact: '',
     imageUrl: '', // Start empty or specific default
@@ -62,6 +65,46 @@ const Dashboard: React.FC = () => {
       });
     }
   }, [user]);
+
+  // Location Handlers
+  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const provinceName = e.target.value;
+      const coords = getCoordinates(provinceName);
+      
+      setGroupForm(prev => ({
+          ...prev,
+          province: provinceName,
+          amphoe: '',
+          tambon: '',
+          lat: coords.lat.toString(),
+          lng: coords.lng.toString()
+      }));
+  };
+
+  const handleAmphoeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const amphoeName = e.target.value;
+      const coords = getCoordinates(groupForm.province, amphoeName);
+      
+      setGroupForm(prev => ({
+          ...prev,
+          amphoe: amphoeName,
+          tambon: '',
+          lat: coords.lat.toString(),
+          lng: coords.lng.toString()
+      }));
+  };
+
+  const handleTambonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const tambonName = e.target.value;
+      const coords = getCoordinates(groupForm.province, groupForm.amphoe, tambonName);
+      
+      setGroupForm(prev => ({
+          ...prev,
+          tambon: tambonName,
+          lat: coords.lat.toString(),
+          lng: coords.lng.toString()
+      }));
+  };
 
   // Helper to clear specific error when user types
   const handleInputChange = (field: string, value: any) => {
@@ -195,22 +238,6 @@ const Dashboard: React.FC = () => {
       newErrors.contact = 'รูปแบบอีเมลไม่ถูกต้อง';
     }
 
-    // Coordinates
-    const lat = parseFloat(groupForm.lat);
-    const lng = parseFloat(groupForm.lng);
-
-    if (isNaN(lat) || groupForm.lat === '') {
-      newErrors.lat = 'ระบุตัวเลข';
-    } else if (lat < -90 || lat > 90) {
-      newErrors.lat = 'ค่าระหว่าง -90 ถึง 90';
-    }
-
-    if (isNaN(lng) || groupForm.lng === '') {
-      newErrors.lng = 'ระบุตัวเลข';
-    } else if (lng < -180 || lng > 180) {
-      newErrors.lng = 'ค่าระหว่าง -180 ถึง 180';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -260,6 +287,8 @@ const Dashboard: React.FC = () => {
       const groupData = {
           name: groupForm.name,
           province: groupForm.province,
+          amphoe: groupForm.amphoe,
+          tambon: groupForm.tambon,
           coordinates: { 
               lat: parseFloat(groupForm.lat), 
               lng: parseFloat(groupForm.lng) 
@@ -311,6 +340,8 @@ const Dashboard: React.FC = () => {
     setGroupForm({
         name: group.name,
         province: group.province,
+        amphoe: group.amphoe || '',
+        tambon: group.tambon || '',
         lat: group.coordinates.lat.toString(),
         lng: group.coordinates.lng.toString(),
         description: group.description,
@@ -338,7 +369,7 @@ const Dashboard: React.FC = () => {
   const inputClass = (field: string) => `w-full p-3 rounded-lg border outline-none transition-colors ${
     errors[field] 
       ? 'border-red-500 bg-red-50 focus:border-red-500' 
-      : 'border-brand-gray bg-brand-cream focus:border-brand-green focus:ring-2 focus:ring-brand-green/20'
+      : 'border-brand-gray bg-brand-linen focus:border-brand-bud focus:ring-2 focus:ring-brand-bud/20'
   }`;
 
   return (
@@ -349,38 +380,38 @@ const Dashboard: React.FC = () => {
         
         {/* Profile Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-brand-gray p-6">
-            <h2 className="text-xl font-bold text-brand-darkGreen mb-4 flex items-center">
+            <h2 className="text-xl font-bold text-brand-obsidian mb-4 flex items-center">
                 <UserIcon className="w-5 h-5 mr-2" /> ข้อมูลส่วนตัว
             </h2>
             <div className="flex flex-col items-center mb-6">
                 <img 
                     src={user?.profileImage} 
                     alt="Profile" 
-                    className="w-20 h-20 rounded-full border-4 border-brand-cream shadow-md mb-3 object-cover"
+                    className="w-20 h-20 rounded-full border-4 border-brand-linen shadow-md mb-3 object-cover"
                 />
                 <div className="text-xs text-brand-earth">{user?.email}</div>
             </div>
             <form onSubmit={handleProfileUpdate} className="space-y-4">
                 <div>
-                    <label className="block text-xs font-bold text-brand-darkGreen mb-1">ชื่อที่แสดง</label>
+                    <label className="block text-xs font-bold text-brand-obsidian mb-1">ชื่อที่แสดง</label>
                     <input 
                         type="text"
                         value={profileForm.name}
                         onChange={e => setProfileForm({...profileForm, name: e.target.value})}
-                        className="w-full p-2 text-sm rounded border border-brand-gray focus:border-brand-green outline-none"
+                        className="w-full p-2 text-sm rounded border border-brand-gray focus:border-brand-bud outline-none"
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-bold text-brand-darkGreen mb-1">แนะนำตัวสั้นๆ</label>
+                    <label className="block text-xs font-bold text-brand-obsidian mb-1">แนะนำตัวสั้นๆ</label>
                     <textarea 
                         value={profileForm.bio}
                         onChange={e => setProfileForm({...profileForm, bio: e.target.value})}
                         rows={3}
-                        className="w-full p-2 text-sm rounded border border-brand-gray focus:border-brand-green outline-none"
+                        className="w-full p-2 text-sm rounded border border-brand-gray focus:border-brand-bud outline-none"
                         placeholder="เขียนแนะนำตัวเอง..."
                     ></textarea>
                 </div>
-                <button type="submit" className="w-full py-2 bg-brand-darkGreen text-white text-sm font-bold rounded-lg hover:bg-brand-green transition-colors">
+                <button type="submit" className="w-full py-2 bg-brand-obsidian text-white text-sm font-bold rounded-lg hover:bg-brand-bud transition-colors">
                     บันทึกข้อมูลส่วนตัว
                 </button>
             </form>
@@ -388,20 +419,20 @@ const Dashboard: React.FC = () => {
 
         {/* My Groups List */}
         <div className="bg-white rounded-2xl shadow-sm border border-brand-gray p-6">
-            <h2 className="text-xl font-bold text-brand-darkGreen mb-4">กลุ่มของฉัน</h2>
+            <h2 className="text-xl font-bold text-brand-obsidian mb-4">กลุ่มของฉัน</h2>
             {isLoadingGroups ? (
                 <div className="text-center text-brand-earth py-4">กำลังโหลด...</div>
             ) : myGroups.length > 0 ? (
                 <div className="space-y-3">
                     {myGroups.map(group => (
-                        <div key={group.id} className="p-3 border border-brand-gray rounded-lg hover:border-brand-green transition-colors bg-brand-cream/30">
-                            <h3 className="font-bold text-brand-darkGreen text-sm mb-1">{group.name}</h3>
+                        <div key={group.id} className="p-3 border border-brand-gray rounded-lg hover:border-brand-bud transition-colors bg-brand-linen/30">
+                            <h3 className="font-bold text-brand-obsidian text-sm mb-1">{group.name}</h3>
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-brand-earth">{group.province}</span>
                                 <div className="flex gap-2">
                                     <button 
                                         onClick={() => startEditing(group)}
-                                        className="text-xs flex items-center px-2 py-1 border border-brand-salmon text-brand-salmon font-bold rounded-md hover:bg-brand-salmon hover:text-white transition-colors"
+                                        className="text-xs flex items-center px-2 py-1 border border-brand-orange text-brand-orange font-bold rounded-md hover:bg-brand-orange hover:text-white transition-colors"
                                     >
                                         <Edit2 className="w-3 h-3 mr-1" /> แก้ไข
                                     </button>
@@ -452,9 +483,9 @@ const Dashboard: React.FC = () => {
 
             <form onSubmit={handleGroupSubmit} className="space-y-6" noValidate>
                 {/* Basic Info */}
-                <div className="grid md:grid-cols-2 gap-6">
+                <div>
                     <div>
-                        <label className="block text-sm font-bold text-brand-darkGreen mb-2">ชื่อกลุ่ม <span className="text-brand-salmon">*</span></label>
+                        <label className="block text-sm font-bold text-brand-obsidian mb-2">ชื่อกลุ่ม <span className="text-brand-orange">*</span></label>
                         <input 
                             type="text" 
                             className={inputClass('name')}
@@ -464,14 +495,47 @@ const Dashboard: React.FC = () => {
                         />
                         <ErrorMsg field="name" />
                     </div>
+                </div>
+
+                {/* Location Selection */}
+                <div className="grid md:grid-cols-3 gap-6">
                     <div>
-                        <label className="block text-sm font-bold text-brand-darkGreen mb-2">จังหวัด <span className="text-brand-salmon">*</span></label>
+                        <label className="block text-sm font-bold text-brand-obsidian mb-2">จังหวัด <span className="text-brand-orange">*</span></label>
                         <select 
-                            className="w-full p-3 rounded-lg border border-brand-gray focus:border-brand-green outline-none bg-brand-cream"
+                            className="w-full p-3 rounded-lg border border-brand-gray focus:border-brand-bud outline-none bg-brand-linen"
                             value={groupForm.province}
-                            onChange={e => handleInputChange('province', e.target.value)}
+                            onChange={handleProvinceChange}
                         >
-                            {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
+                            {THAI_LOCATIONS.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-brand-obsidian mb-2">อำเภอ/เขต <span className="text-brand-orange">*</span></label>
+                        <select 
+                            className="w-full p-3 rounded-lg border border-brand-gray focus:border-brand-bud outline-none bg-brand-linen disabled:opacity-50"
+                            value={groupForm.amphoe}
+                            onChange={handleAmphoeChange}
+                            disabled={!groupForm.province}
+                        >
+                            <option value="">เลือกอำเภอ</option>
+                            {THAI_LOCATIONS.find(p => p.name === groupForm.province)?.amphoes.map(a => (
+                                <option key={a.name} value={a.name}>{a.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold text-brand-obsidian mb-2">ตำบล/แขวง <span className="text-brand-orange">*</span></label>
+                        <select 
+                            className="w-full p-3 rounded-lg border border-brand-gray focus:border-brand-bud outline-none bg-brand-linen disabled:opacity-50"
+                            value={groupForm.tambon}
+                            onChange={handleTambonChange}
+                            disabled={!groupForm.amphoe}
+                        >
+                            <option value="">เลือกตำบล</option>
+                            {THAI_LOCATIONS.find(p => p.name === groupForm.province)?.amphoes
+                                .find(a => a.name === groupForm.amphoe)?.tambons.map(t => (
+                                <option key={t.name} value={t.name}>{t.name}</option>
+                            ))}
                         </select>
                     </div>
                 </div>
@@ -513,45 +577,17 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Location & Contact */}
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-sm font-bold text-brand-darkGreen mb-2">อีเมลติดต่อ <span className="text-brand-salmon">*</span></label>
-                        <input 
-                            type="email" 
-                            className={inputClass('contact')}
-                            placeholder="contact@group.org"
-                            value={groupForm.contact}
-                            onChange={e => handleInputChange('contact', e.target.value)}
-                        />
-                        <ErrorMsg field="contact" />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-bold text-brand-darkGreen mb-2">พิกัด (ละติจูด, ลองจิจูด) <span className="text-brand-salmon">*</span></label>
-                        <div className="flex gap-2">
-                            <div className="w-1/2">
-                                <input 
-                                    type="text" 
-                                    placeholder="Lat"
-                                    className={inputClass('lat')}
-                                    value={groupForm.lat}
-                                    onChange={e => handleInputChange('lat', e.target.value)}
-                                />
-                                <ErrorMsg field="lat" />
-                            </div>
-                            <div className="w-1/2">
-                                <input 
-                                    type="text" 
-                                    placeholder="Lng"
-                                    className={inputClass('lng')}
-                                    value={groupForm.lng}
-                                    onChange={e => handleInputChange('lng', e.target.value)}
-                                />
-                                <ErrorMsg field="lng" />
-                            </div>
-                        </div>
-                        <p className="text-xs text-brand-earth mt-1 flex items-center"><MapPin className="w-3 h-3 mr-1"/> ใช้ Google Maps เพื่อค้นหาพิกัด</p>
-                    </div>
+                {/* Contact Info */}
+                <div>
+                    <label className="block text-sm font-bold text-brand-darkGreen mb-2">อีเมลติดต่อ <span className="text-brand-salmon">*</span></label>
+                    <input 
+                        type="email" 
+                        className={inputClass('contact')}
+                        placeholder="contact@group.org"
+                        value={groupForm.contact}
+                        onChange={e => handleInputChange('contact', e.target.value)}
+                    />
+                    <ErrorMsg field="contact" />
                 </div>
 
                 {/* Image Upload */}

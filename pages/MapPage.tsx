@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { apiService } from '../services/api';
+import { useAuth } from '../services/authContext';
 import { Group, ISSUES } from '../types';
 import MapComponent from '../components/MapComponent';
 import { Filter, Search } from 'lucide-react';
@@ -11,6 +12,7 @@ const MapPage: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filterIssue, setFilterIssue] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const { user } = useAuth();
   
   const location = useLocation();
   
@@ -42,19 +44,21 @@ const MapPage: React.FC = () => {
     const matchesIssue = filterIssue === 'All' || group.issues.includes(filterIssue);
     const matchesSearch = group.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           group.province.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesIssue && matchesSearch;
+    const matchesVisibility = !group.isHidden || (user?.role === 'admin' || group.ownerId === user?.uid);
+    
+    return matchesIssue && matchesSearch && matchesVisibility;
   });
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-80px)]">
       <h1 className="text-3xl font-bold mb-6 flex items-center">
-        <span className="w-8 h-8 bg-brand-salmon rounded-full inline-block mr-3"></span>
+        <span className="w-8 h-8 bg-brand-orange rounded-full inline-block mr-3"></span>
         แผนที่พลังเยาวชน
       </h1>
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-xl border-2 border-brand-gray mb-6 flex flex-col md:flex-row gap-4 items-center justify-between shadow-sm">
-        <div className="flex items-center w-full md:w-auto bg-brand-cream rounded-lg px-3 py-2 border border-brand-gray">
+      <div className="bg-white p-4 rounded-xl border-2 border-brand-obsidian mb-6 flex flex-col md:flex-row gap-4 items-center justify-between shadow-retro-sm">
+        <div className="flex items-center w-full md:w-auto bg-brand-linen rounded-lg px-3 py-2 border border-brand-gray">
             <Search className="w-4 h-4 text-brand-earth mr-2" />
             <input 
                 type="text" 
@@ -69,7 +73,7 @@ const MapPage: React.FC = () => {
             <Filter className="w-4 h-4 text-brand-earth flex-shrink-0" />
             <button 
                 onClick={() => setFilterIssue('All')}
-                className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium transition-colors ${filterIssue === 'All' ? 'bg-brand-darkGreen text-white' : 'bg-brand-cream text-brand-darkGreen hover:bg-brand-gray'}`}
+                className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium transition-colors ${filterIssue === 'All' ? 'bg-brand-obsidian text-brand-linen' : 'bg-brand-linen text-brand-obsidian hover:bg-brand-gray'}`}
             >
                 ประเด็นทั้งหมด
             </button>
@@ -77,7 +81,7 @@ const MapPage: React.FC = () => {
                 <button 
                     key={issue}
                     onClick={() => setFilterIssue(issue)}
-                    className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium transition-colors ${filterIssue === issue ? 'bg-brand-green text-white' : 'bg-brand-cream text-brand-darkGreen hover:bg-brand-gray'}`}
+                    className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium transition-colors ${filterIssue === issue ? 'bg-brand-bud text-brand-obsidian' : 'bg-brand-linen text-brand-obsidian hover:bg-brand-gray'}`}
                 >
                     {issue}
                 </button>
@@ -96,8 +100,8 @@ const MapPage: React.FC = () => {
                     onClick={() => setSelectedId(group.id)}
                     className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
                       selectedId === group.id 
-                        ? 'border-brand-green bg-brand-green/10 shadow-[0_0_15px_rgba(122,168,116,0.3)] scale-[1.02] ring-1 ring-brand-green z-10' 
-                        : 'border-brand-gray bg-white hover:border-brand-blue hover:shadow-md'
+                        ? 'border-brand-bud bg-brand-bud/10 shadow-[0_0_15px_rgba(181,211,64,0.3)] scale-[1.02] ring-1 ring-brand-bud z-10' 
+                        : 'border-brand-gray bg-white hover:border-brand-ocean hover:shadow-md'
                     }`}
                 >
                     <div className="flex justify-between items-start mb-2">

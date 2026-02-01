@@ -2,19 +2,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types';
 import { auth, googleProvider, db } from './firebase';
-// Fix for "Module 'firebase/auth' has no exported member" error by importing namespace and casting
-import * as firebaseAuth from 'firebase/auth';
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-const { signInWithPopup, signOut, onAuthStateChanged } = firebaseAuth as any;
-
 // Mock User Data for Fallback
+const ADMIN_EMAILS = ['demo@commonsyouth.org', 'admin@commonsyouth.org'];
+
 const MOCK_USER: User = {
   uid: 'mock-user-123',
   email: 'demo@commonsyouth.org',
-  name: 'นักกิจกรรม เยาวชน (Demo)',
+  name: 'Admin User (Demo)',
   profileImage: 'https://ui-avatars.com/api/?name=Commons+Youth&background=7AA874&color=fff',
-  bio: 'บัญชีทดลองใช้งาน (Mock Account)'
+  bio: 'ผู้ดูแลระบบ (Admin Account)',
+  role: 'admin'
 };
 
 interface AuthContextType {
@@ -42,7 +42,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             email: firebaseUser.email || '',
             name: firebaseUser.displayName || 'User',
             profileImage: firebaseUser.photoURL || undefined,
-            bio: ''
+            bio: '',
+            role: (firebaseUser.email && ADMIN_EMAILS.includes(firebaseUser.email)) ? 'admin' : 'user'
           };
 
           // 2. Fetch extended info (Bio) from Firestore if available
