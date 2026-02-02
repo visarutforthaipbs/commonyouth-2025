@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../services/authContext';
 import { Chrome } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const Login: React.FC = () => {
   const { loginWithGoogle, loading } = useAuth();
@@ -18,9 +19,13 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4">
+      <SEO 
+        title="เข้าสู่ระบบ" 
+        description="เข้าสู่ระบบเพื่อจัดการข้อมูลกลุ่มกิจกรรมและโครงการของคุณ"
+      />
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border-2 border-brand-obsidian overflow-hidden">
         <div className="bg-brand-obsidian p-6 text-center">
-          <h2 className="text-3xl font-bold text-brand-linen">ยินดีต้อนรับกลับ</h2>
+          <h2 className="text-3xl font-bold text-brand-linen uppercase">ยินดีต้อนรับกลับ</h2>
           <p className="text-brand-bud opacity-80 mt-2">เข้าสู่ระบบเพื่อจัดการกลุ่มเยาวชนของคุณ</p>
         </div>
         

@@ -1,94 +1,111 @@
-export interface Province {
+
+// Type definitions for the Raw JSON structure
+interface RawTambon {
+  id: number;
+  name_th: string;
+  zip_code?: number;
+  lat?: number;
+  long?: number;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string | null;
+}
+
+interface RawAmphoe {
+  id: number;
+  name_th: string;
+  tambon: RawTambon[];
+}
+
+interface RawProvince {
+  id: number;
+  name_th: string;
+  amphure: RawAmphoe[];
+}
+
+// Type definitions for our Application
+export interface Tambon {
   name: string;
-  coordinates: { lat: number, lng: number };
-  amphoes: Amphoe[];
+  coordinates: { lat: number; lng: number };
 }
 
 export interface Amphoe {
   name: string;
-  coordinates: { lat: number, lng: number };
+  coordinates: { lat: number; lng: number };
   tambons: Tambon[];
 }
 
-export interface Tambon {
+export interface Province {
   name: string;
-  coordinates: { lat: number, lng: number };
+  coordinates: { lat: number; lng: number };
+  amphoes: Amphoe[];
 }
 
-// Simplified Thai Location Data (Mock for demonstration)
-export const THAI_LOCATIONS: Province[] = [
-  {
-    name: "กรุงเทพมหานคร",
-    coordinates: { lat: 13.7563, lng: 100.5018 },
-    amphoes: [
-      {
-        name: "พระนคร",
-        coordinates: { lat: 13.7648, lng: 100.4992 },
-        tambons: [
-           { name: "พระบรมมหาราชวัง", coordinates: { lat: 13.7500, lng: 100.4913 } },
-           { name: "วังบูรพาภิรมย์", coordinates: { lat: 13.7447, lng: 100.5029 } }
-        ]
-      },
-      {
-        name: "ปทุมวัน",
-        coordinates: { lat: 13.7449, lng: 100.5293 },
-        tambons: [
-            { name: "รองเมือง", coordinates: { lat: 13.7437, lng: 100.5168 } },
-            { name: "ลุมพินี", coordinates: { lat: 13.7317, lng: 100.5413 } }
-        ]
-      }
-    ]
-  },
-  {
-    name: "เชียงใหม่",
-    coordinates: { lat: 18.7883, lng: 98.9853 },
-    amphoes: [
-      {
-        name: "เมืองเชียงใหม่",
-        coordinates: { lat: 18.7904, lng: 98.9847 },
-        tambons: [
-            { name: "ศรีภูมิ", coordinates: { lat: 18.7937, lng: 98.9872 } },
-            { name: "ช้างม่อย", coordinates: { lat: 18.7900, lng: 98.9950 } }
-        ]
-      },
-      {
-        name: "แม่ริม",
-        coordinates: { lat: 18.9135, lng: 98.9405 },
-        tambons: [
-            { name: "ริมใต้", coordinates: { lat: 18.9135, lng: 98.9405 } },
-            { name: "ริมเหนือ", coordinates: { lat: 18.9472, lng: 98.9558 } }
-        ]
-      }
-    ]
-  },
-  {
-    name: "ขอนแก่น",
-    coordinates: { lat: 16.4322, lng: 102.8236 },
-    amphoes: [
-      {
-        name: "เมืองขอนแก่น",
-        coordinates: { lat: 16.4255, lng: 102.8353 },
-        tambons: [
-            { name: "ในเมือง", coordinates: { lat: 16.4255, lng: 102.8353 } },
-            { name: "เมืองเก่า", coordinates: { lat: 16.3980, lng: 102.8090 } }
-        ]
-      }
-    ]
-  }
-];
+// Cache for loaded data
+let thaiLocationsCache: Province[] | null = null;
 
-export const getCoordinates = (provinceName: string, amphoeName?: string, tambonName?: string): { lat: number, lng: number } => {
-    const province = THAI_LOCATIONS.find(p => p.name === provinceName);
+export const loadThaiLocations = async (): Promise<Province[]> => {
+  if (thaiLocationsCache) return thaiLocationsCache;
+
+  try {
+    const response = await fetch('/thai_province_data.json');
+    if (!response.ok) {
+        throw new Error('Failed to load Thai location data');
+    }
+    const rawData = await response.json() as RawProvince[];
+
+    thaiLocationsCache = rawData.map(p => {
+      return {
+        name: p.name_th,
+        coordinates: { lat: 0, lng: 0 },
+        amphoes: p.amphure.map(a => {
+          return {
+            name: a.name_th,
+            coordinates: { lat: 0, lng: 0 },
+            tambons: a.tambon ? a.tambon.map(t => ({
+              name: t.name_th,
+              coordinates: { 
+                lat: t.lat || 0, 
+                lng: t.long || 0 
+              }
+            })) : []
+          };
+        })
+      };
+    });
+
+    return thaiLocationsCache;
+  } catch (error) {
+    console.error("Error loading Thai locations:", error);
+    return [];
+  }
+};
+
+export const getCoordinates = (locations: Province[], provinceName: string, amphoeName?: string, tambonName?: string): { lat: number, lng: number } => {
+    const province = locations.find(p => p.name === provinceName);
     if (!province) return { lat: 13.7563, lng: 100.5018 }; // Default to Bangkok
 
     let lat = province.coordinates.lat;
     let lng = province.coordinates.lng;
+    
+    // Fallback coordinates for partial data compatibility
+    if (lat === 0 && lng === 0) {
+         if (province.name === "กรุงเทพมหานคร") { lat = 13.7563; lng = 100.5018; }
+         else if (province.name === "เชียงใหม่") { lat = 18.7883; lng = 98.9853; }
+         else if (province.name === "ขอนแก่น") { lat = 16.4322; lng = 102.8236; }
+         else if (province.name === "ภูเก็ต") { lat = 7.8804; lng = 98.3923; }
+    }
 
     if (amphoeName) {
         const amphoe = province.amphoes.find(a => a.name === amphoeName);
         if (amphoe) {
             lat = amphoe.coordinates.lat;
             lng = amphoe.coordinates.lng;
+            
+            if (lat === 0 && lng === 0 && amphoe.tambons.length > 0) {
+                 lat = amphoe.tambons[0].coordinates.lat;
+                 lng = amphoe.tambons[0].coordinates.lng;
+            }
 
             if (tambonName) {
                 const tambon = amphoe.tambons.find(t => t.name === tambonName);
@@ -100,9 +117,5 @@ export const getCoordinates = (provinceName: string, amphoeName?: string, tambon
         }
     }
     
-    // Add small random jitter to prevent stacked markers if exact same location
-    return {
-        lat: lat + (Math.random() - 0.5) * 0.005,
-        lng: lng + (Math.random() - 0.5) * 0.005
-    };
+    return { lat, lng };
 };

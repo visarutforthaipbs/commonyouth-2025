@@ -1,9 +1,14 @@
 import React from 'react';
 import { Target, Eye, Heart, Users } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const About: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-12">
+      <SEO 
+        title="เกี่ยวกับเรา" 
+        description="พันธกิจและวิสัยทัศน์ของ Commons Youth Platform ในการสร้างพื้นที่ปลอดภัยและสร้างสรรค์สำหรับเยาวชนไทย"
+      />
       {/* Header */}
       <div className="text-center mb-16">
         <h1 className="text-4xl font-bold text-brand-obsidian mb-4">เกี่ยวกับเรา</h1>

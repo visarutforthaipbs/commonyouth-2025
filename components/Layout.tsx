@@ -47,13 +47,10 @@ const Layout: React.FC = () => {
 
             {/* Desktop Menu */}
             <div className="hidden lg:flex space-x-6 text-sm font-medium">
-              <NavLink to="/" className={linkClass}>หน้าหลัก</NavLink>
-              <NavLink to="/about" className={linkClass}>เกี่ยวกับเรา</NavLink>
               <NavLink to="/map" className={linkClass}>แผนที่</NavLink>
               <NavLink to="/community" className={linkClass}>ชุมชน</NavLink>
               <NavLink to="/activities" className={linkClass}>กิจกรรม</NavLink>
               <NavLink to="/projects" className={linkClass}>โครงการ</NavLink>
-              <NavLink to="/partners" className={linkClass}>ภาคีเครือข่าย</NavLink>
             </div>
 
             {/* Desktop Auth Profile Dropdown */}
@@ -140,13 +137,10 @@ const Layout: React.FC = () => {
         {isMenuOpen && (
           <div className="lg:hidden bg-brand-linen border-b border-brand-gray pb-4 px-4 shadow-xl h-[calc(100vh-80px)] overflow-y-auto fixed w-full z-40">
             <div className="flex flex-col space-y-4 mt-4">
-              <NavLink to="/" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium px-2 py-1">หน้าหลัก</NavLink>
-              <NavLink to="/about" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium px-2 py-1">เกี่ยวกับเรา</NavLink>
               <NavLink to="/map" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium px-2 py-1">แผนที่</NavLink>
               <NavLink to="/community" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium px-2 py-1">ชุมชน</NavLink>
               <NavLink to="/activities" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium px-2 py-1">กิจกรรม</NavLink>
               <NavLink to="/projects" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium px-2 py-1">โครงการ</NavLink>
-              <NavLink to="/partners" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium px-2 py-1">ภาคีเครือข่าย</NavLink>
               
               <div className="pt-4 border-t border-brand-gray/50">
                 {user ? (
@@ -200,7 +194,7 @@ const Layout: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="font-bold text-2xl mb-4">Commons<span className="text-brand-orange">Youth</span></h3>
+              <img src="/image/footer-icon.png" alt="Commons Youth" className="h-16 w-auto mb-4" />
               <p className="opacity-80 max-w-xs text-sm">
                 เชื่อมโยงกลุ่มพลังเยาวชนทั่วประเทศไทยเพื่อสร้างอนาคตที่ดีกว่า
               </p>

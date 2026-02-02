@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './services/authContext';
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -14,6 +15,7 @@ import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
 import Partners from './pages/Partners';
 import GroupDetail from './pages/GroupDetail';
+import DesignSystem from './pages/DesignSystem';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -32,9 +34,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <HashRouter>
-        <Routes>
+    <HelmetProvider>
+      <AuthProvider>
+        <HashRouter>
+          <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
@@ -44,7 +47,9 @@ const App: React.FC = () => {
             <Route path="projects" element={<Projects />} />
             <Route path="projects/:id" element={<ProjectDetail />} />
             <Route path="groups/:id" element={<GroupDetail />} />
+            <Route path="group/:id" element={<Navigate to="/groups/:id" replace />} />
             <Route path="partners" element={<Partners />} />
+            <Route path="design-system" element={<DesignSystem />} />
             <Route path="login" element={<Login />} />
             <Route 
               path="dashboard" 
@@ -57,7 +62,8 @@ const App: React.FC = () => {
           </Route>
         </Routes>
       </HashRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </HelmetProvider>
   );
 };
 

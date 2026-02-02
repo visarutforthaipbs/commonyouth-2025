@@ -5,6 +5,7 @@ import { useAuth } from '../services/authContext';
 import { Group } from '../types';
 import { Search, Globe, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const Community: React.FC = () => {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -34,8 +35,12 @@ const Community: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-12">
+      <SEO 
+        title="เครือข่ายเยาวชน" 
+        description="ค้นหาและเชื่อมต่อกับกลุ่มกิจกรรมเพื่อสังคม กลุ่มเยาวชน และองค์กรภาคประชาสังคมทั่วไทย"
+      />
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-brand-obsidian mb-4">ทำเนียบเครือข่าย</h1>
+        <h1 className="text-4xl font-bold text-brand-obsidian mb-4 uppercase">ทำเนียบเครือข่าย</h1>
         <p className="text-brand-earth max-w-2xl mx-auto">สำรวจเครือข่ายความคิดริเริ่มของเยาวชนที่ขับเคลื่อนการเปลี่ยนแปลงทั่วประเทศ</p>
       </div>
 
@@ -50,7 +55,7 @@ const Community: React.FC = () => {
       </div>
 
       {/* Browser Window Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {filteredGroups.map(group => (
           <div key={group.id} className={`bg-white rounded-xl border-2 border-brand-obsidian overflow-hidden hover:shadow-retro transition-shadow duration-300 flex flex-col ${group.isHidden ? 'opacity-75' : ''}`}>
             {/* Browser Header */}
@@ -79,7 +84,7 @@ const Community: React.FC = () => {
                 {user?.role === 'admin' && (
                     <button
                         onClick={(e) => handleToggleVisibility(group, e)}
-                        className="absolute top-2 right-2 z-20 bg-white/90 p-1.5 rounded-full shadow-md text-brand-obsidian hover:bg-brand-yellow transition-colors border-2 border-brand-obsidian"
+                        className="absolute top-2 right-2 z-20 bg-white/90 p-1.5 rounded-full shadow-md text-brand-obsidian hover:bg-brand-morning transition-colors border-2 border-brand-obsidian"
                         title={group.isHidden ? "แสดงกลุ่มนี้" : "ซ่อนกลุ่มนี้"}
                     >
                         {group.isHidden ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -95,19 +100,19 @@ const Community: React.FC = () => {
                 
                 <div className="flex flex-wrap gap-2 mb-4">
                     {group.issues.map(tag => (
-                        <span key={tag} className="text-xs bg-brand-ocean/10 text-brand-ocean font-bold px-2 py-1 rounded">
+                        <span key={tag} className="text-xs bg-brand-ocean/10 text-brand-ocean font-bold font-mono px-2 py-1 rounded">
                             #{tag.split(' ')[0]}
                         </span>
                     ))}
                     {(group.amphoe || group.tambon) && (
-                        <span className="text-xs bg-brand-linen text-brand-earth font-bold px-2 py-1 rounded border border-brand-gray/50">
+                        <span className="text-xs bg-brand-linen text-brand-earth font-bold font-mono px-2 py-1 rounded border border-brand-gray/50">
                             {group.tambon && `${group.tambon}, `}{group.amphoe}
                         </span>
                     )}
                 </div>
 
                 <button 
-                    onClick={() => navigate(`/group/${group.id}`)}
+                    onClick={() => navigate(`/groups/${group.id}`)}
                     className="w-full py-2 border-2 border-brand-obsidian rounded-lg font-bold hover:bg-brand-obsidian hover:text-brand-linen transition-colors flex items-center justify-center gap-2 text-sm"
                 >
                     <Globe className="w-4 h-4" /> ดูข้อมูลกลุ่ม

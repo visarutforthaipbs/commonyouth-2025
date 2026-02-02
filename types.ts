@@ -31,6 +31,8 @@ export interface Group {
 
 export interface Activity {
   id: string;
+  ownerId: string;
+  groupId: string;
   title: string;
   date: string; // ISO string
   location: string;
@@ -38,14 +40,19 @@ export interface Activity {
   imageUrl?: string;
   groupName: string;
   description?: string;
+  createdAt?: string;
 }
 
 export interface Project {
   id: number | string;
+  ownerId: string;
+  groupId?: string;
+  activityIds?: string[]; // Linked activities
   title: string;
   location: string;
   date: string;
   category: string;
+  projectStatus: 'ongoing' | 'completed'; // Project lifecycle status
   description: string;
   fullContent?: string; // Extended description for detail page
   image: string;
@@ -53,6 +60,7 @@ export interface Project {
     volunteers: number | string;
     beneficiaries: string;
   };
+  createdAt?: string;
 }
 
 export const ISSUES = [
@@ -72,4 +80,20 @@ export const PROVINCES = [
   "ภูเก็ต",
   "สงขลา",
   "นครราชสีมา"
+];
+
+export const PROJECT_CATEGORIES = [
+  "สิ่งแวดล้อม",
+  "วัฒนธรรม",
+  "การศึกษา",
+  "สิทธิมนุษยชน",
+  "ชุมชนและสังคม",
+  "ศิลปะและสร้างสรรค์",
+  "เทคโนโลยี",
+  "อื่นๆ"
+];
+
+export const PROJECT_STATUSES = [
+  { value: 'ongoing', label: 'กำลังดำเนินการ' },
+  { value: 'completed', label: 'เสร็จสิ้นแล้ว' }
 ];

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://commonyouth.pages.dev/sitemap.xml

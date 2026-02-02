@@ -46,6 +46,8 @@ let MOCK_GROUPS: Group[] = [
 const MOCK_ACTIVITIES: Activity[] = [
   {
     id: '101',
+    ownerId: 'admin',
+    groupId: '1',
     title: 'เวิร์กช็อปสวนผักคนเมือง',
     date: new Date(Date.now() + 86400000 * 2).toISOString(),
     location: 'หอศิลปวัฒนธรรมเชียงใหม่',
@@ -56,6 +58,8 @@ const MOCK_ACTIVITIES: Activity[] = [
   },
   {
     id: '102',
+    ownerId: 'mock-user-123',
+    groupId: '2',
     title: 'เวทีเยาวชนอีสาน 2024',
     date: new Date(Date.now() + 86400000 * 14).toISOString(),
     location: 'มหาวิทยาลัยขอนแก่น',
@@ -66,6 +70,8 @@ const MOCK_ACTIVITIES: Activity[] = [
   },
   {
     id: '103',
+    ownerId: 'user3',
+    groupId: '3',
     title: 'เดินเมืองสงขลา: ย้อนรอยอดีต',
     date: new Date(Date.now() + 86400000 * 7).toISOString(),
     location: 'ถนนนางงาม สงขลา',
@@ -79,10 +85,13 @@ const MOCK_ACTIVITIES: Activity[] = [
 const MOCK_PROJECTS: Project[] = [
   {
     id: 1,
+    ownerId: 'admin',
+    groupId: '1',
     title: "โครงการอากาศสะอาดเชียงใหม่",
     location: "เชียงใหม่",
     date: "มกราคม 2024",
     category: "สิ่งแวดล้อม",
+    projectStatus: 'completed',
     description: "การรวมตัวของเยาวชนในจังหวัดเชียงใหม่เพื่อพัฒนาระบบตรวจวัดฝุ่น PM2.5 ราคาประหยัด และการรณรงค์ลดการเผาในพื้นที่เกษตรกรรม ผ่านกระบวนการมีส่วนร่วมของชุมชน",
     fullContent: "โครงการนี้เริ่มต้นจากการตั้งคำถามของกลุ่มเยาวชนในเชียงใหม่เกี่ยวกับปัญหามลพิษทางอากาศที่เรื้อรังมานานหลายปี เราได้ร่วมมือกับมหาวิทยาลัยในท้องถิ่นเพื่อพัฒนาเครื่องตรวจวัดคุณภาพอากาศแบบ Low-cost sensor ที่สามารถติดตั้งได้ในทุกชุมชน นอกจากนี้ยังมีการจัดเวิร์กช็อปให้ความรู้แก่เกษตรกรเกี่ยวกับทางเลือกในการจัดการวัสดุเหลือใช้ทางการเกษตร เพื่อลดการเผาที่ต้นทาง ผลลัพธ์ที่ได้คือการสร้างเครือข่ายเฝ้าระวังคุณภาพอากาศที่มีประสิทธิภาพและการตื่นตัวของภาคประชาสังคมในการเรียกร้องสิทธิในอากาศสะอาด",
     image: "https://picsum.photos/800/600?random=10",
@@ -90,10 +99,13 @@ const MOCK_PROJECTS: Project[] = [
   },
   {
     id: 2,
+    ownerId: 'user3',
+    groupId: '3',
     title: "ฟื้นฟูเมืองเก่าสงขลา",
     location: "สงขลา",
     date: "มีนาคม 2024",
     category: "วัฒนธรรม",
+    projectStatus: 'ongoing',
     description: "โครงการอนุรักษ์สถาปัตยกรรมชิโน-ยูโรเปียนและการสร้างพื้นที่สร้างสรรค์สำหรับศิลปินรุ่นใหม่ เพื่อเชื่อมโยงเรื่องราวในอดีตสู่อนาคตของเมืองสงขลา",
     fullContent: "ย่านเมืองเก่าสงขลาเต็มไปด้วยประวัติศาสตร์และสถาปัตยกรรมที่ทรงคุณค่า แต่เริ่มทรุดโทรมตามกาลเวลา กลุ่มเยาวชน 'Songkhla Heritage Youth' จึงได้ริเริ่มโครงการนี้เพื่อฟื้นคืนชีวิตให้ย่านเมืองเก่า ไม่ใช่แค่การซ่อมแซมตึก แต่คือการนำศิลปะ ดนตรี และกิจกรรมร่วมสมัยเข้าไปอยู่ในพื้นที่ประวัติศาสตร์ ทำให้คนรุ่นใหม่รู้สึกเชื่อมโยงกับรากเหง้าของตนเอง กิจกรรมประกอบด้วย Walking Tour ที่นำโดยมัคคุเทศก์น้อย การแสดงดนตรีในบ้านโบราณ และนิทรรศการภาพถ่าย",
     image: "https://picsum.photos/800/600?random=11",
@@ -101,10 +113,13 @@ const MOCK_PROJECTS: Project[] = [
   },
   {
     id: 3,
+    ownerId: 'mock-user-123',
+    groupId: '2',
     title: "โรงเรียนพลเมืองขอนแก่น",
     location: "ขอนแก่น",
     date: "กุมภาพันธ์ 2024",
     category: "การศึกษา",
+    projectStatus: 'completed',
     description: "หลักสูตรนอกห้องเรียนที่เปิดโอกาสให้เยาวชนได้เรียนรู้เรื่องสิทธิพลเมือง การกระจายอำนาจ และการตรวจสอบการทำงานของภาครัฐในระดับท้องถิ่น",
     fullContent: "โรงเรียนพลเมืองขอนแก่นไม่ได้มีห้องเรียนสี่เหลี่ยม แต่คือการลงพื้นที่จริงเพื่อศึกษาปัญหาสังคม ทั้งเรื่องการจัดการขยะ การขนส่งสาธารณะ และการจัดสรรงบประมาณท้องถิ่น เยาวชนที่เข้าร่วมจะได้ฝึกทักษะการคิดวิเคราะห์ การอภิปราย และการนำเสนอข้อเสนอนโยบายต่อผู้บริหารท้องถิ่น เป้าหมายคือการสร้าง 'พลเมืองตื่นรู้' (Active Citizen) ที่พร้อมจะมีส่วนร่วมในการพัฒนาบ้านเกิดของตนเอง",
     image: "https://picsum.photos/800/600?random=12",
@@ -273,6 +288,22 @@ class ApiService {
 
   // Fetch activities
   async getActivities(): Promise<Activity[]> {
+    if (db) {
+      try {
+        const querySnapshot = await getDocs(collection(db, "activities"));
+        const firestoreActivities = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Activity));
+        console.log("Firestore activities:", firestoreActivities);
+        console.log("Mock activities:", MOCK_ACTIVITIES);
+        // Combine Firestore activities with mock activities
+        return [...firestoreActivities, ...MOCK_ACTIVITIES];
+      } catch (e) {
+        console.error("Error fetching activities from Firestore", e);
+        return [...MOCK_ACTIVITIES];
+      }
+    }
+    
+    console.log("DB not initialized, returning mock only");
+    // Mock Fallback
     return new Promise((resolve) => {
       setTimeout(() => resolve([...MOCK_ACTIVITIES]), 500);
     });
@@ -302,8 +333,64 @@ class ApiService {
     });
   }
 
+  // Add new activity
+  async addActivity(activityData: Omit<Activity, 'id' | 'createdAt'>): Promise<Activity> {
+    const newActivityPayload = {
+        ...activityData,
+        createdAt: new Date().toISOString()
+    };
+
+    if (db) {
+      const docRef = await addDoc(collection(db, "activities"), newActivityPayload);
+      return { id: docRef.id, ...newActivityPayload } as Activity;
+    }
+
+    // Fallback Mock
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const newActivity: Activity = {
+          id: Math.random().toString(36).substr(2, 9),
+          ...newActivityPayload
+        };
+        MOCK_ACTIVITIES.push(newActivity);
+        resolve(newActivity);
+      }, 800);
+    });
+  }
+
+  // Fetch activities owned by specific user
+  async getUserActivities(userId: string): Promise<Activity[]> {
+    if (db) {
+      try {
+        const q = query(collection(db, "activities"), where("ownerId", "==", userId));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Activity));
+      } catch (e) {
+        console.error("Error fetching user activities", e);
+        return [];
+      }
+    }
+    // Fallback Mock
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const userActivities = MOCK_ACTIVITIES.filter(a => a.ownerId === userId);
+        resolve(userActivities);
+      }, 300);
+    });
+  }
+
   // Fetch all projects
   async getProjects(): Promise<Project[]> {
+    if (db) {
+      try {
+        const querySnapshot = await getDocs(collection(db, "projects"));
+        const projects = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project));
+        return projects.length > 0 ? projects : MOCK_PROJECTS;
+      } catch (e) {
+        console.error("Error fetching projects from Firestore", e);
+        return MOCK_PROJECTS;
+      }
+    }
     return new Promise((resolve) => {
       setTimeout(() => resolve([...MOCK_PROJECTS]), 400);
     });
@@ -311,11 +398,166 @@ class ApiService {
 
   // Fetch single project by ID
   async getProjectById(id: string | number): Promise<Project | undefined> {
+    if (db) {
+      try {
+        const docRef = doc(db, "projects", id.toString());
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          return { id: docSnap.id, ...docSnap.data() } as Project;
+        }
+      } catch (e) {
+        console.error("Error getting project", e);
+      }
+    }
     return new Promise((resolve) => {
       setTimeout(() => {
         const project = MOCK_PROJECTS.find(p => p.id == id);
         resolve(project);
       }, 400);
+    });
+  }
+
+  // Add new project
+  async addProject(projectData: Omit<Project, 'id' | 'createdAt'>): Promise<Project> {
+    const newProjectPayload = {
+        ...projectData,
+        createdAt: new Date().toISOString()
+    };
+
+    if (db) {
+      const docRef = await addDoc(collection(db, "projects"), newProjectPayload);
+      return { id: docRef.id, ...newProjectPayload } as Project;
+    }
+
+    // Fallback Mock
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const newProject: Project = {
+          id: Math.random().toString(36).substr(2, 9),
+          ...newProjectPayload
+        };
+        MOCK_PROJECTS.push(newProject);
+        resolve(newProject);
+      }, 800);
+    });
+  }
+
+  // Fetch projects owned by specific user
+  async getUserProjects(userId: string): Promise<Project[]> {
+    if (db) {
+      try {
+        const q = query(collection(db, "projects"), where("ownerId", "==", userId));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project));
+      } catch (e) {
+        console.error("Error fetching user projects", e);
+        return [];
+      }
+    }
+    // Fallback Mock
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const userProjects = MOCK_PROJECTS.filter(p => p.ownerId === userId);
+        resolve(userProjects);
+      }, 300);
+    });
+  }
+
+  // Update existing activity
+  async updateActivity(id: string, activityData: Partial<Activity>): Promise<void> {
+    if (db) {
+       const activityRef = doc(db, "activities", id);
+       await updateDoc(activityRef, activityData);
+       return;
+    }
+
+    // Fallback Mock
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = MOCK_ACTIVITIES.findIndex(a => a.id === id);
+        if (index !== -1) {
+          MOCK_ACTIVITIES[index] = { ...MOCK_ACTIVITIES[index], ...activityData };
+          resolve();
+        } else {
+          reject(new Error("Activity not found"));
+        }
+      }, 800);
+    });
+  }
+
+  // Delete activity
+  async deleteActivity(id: string): Promise<void> {
+    if (db) {
+      try {
+        const activityRef = doc(db, "activities", id);
+        await deleteDoc(activityRef);
+        return;
+      } catch (e) {
+        console.error("Error deleting activity", e);
+        throw e;
+      }
+    }
+
+    // Fallback Mock
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = MOCK_ACTIVITIES.findIndex(a => a.id === id);
+        if (index !== -1) {
+          MOCK_ACTIVITIES.splice(index, 1);
+          resolve();
+        } else {
+          reject(new Error("Activity not found"));
+        }
+      }, 500);
+    });
+  }
+
+  // Update existing project
+  async updateProject(id: string | number, projectData: Partial<Project>): Promise<void> {
+    if (db) {
+       const projectRef = doc(db, "projects", id.toString());
+       await updateDoc(projectRef, projectData);
+       return;
+    }
+
+    // Fallback Mock
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = MOCK_PROJECTS.findIndex(p => p.id == id);
+        if (index !== -1) {
+          MOCK_PROJECTS[index] = { ...MOCK_PROJECTS[index], ...projectData };
+          resolve();
+        } else {
+          reject(new Error("Project not found"));
+        }
+      }, 800);
+    });
+  }
+
+  // Delete project
+  async deleteProject(id: string | number): Promise<void> {
+    if (db) {
+      try {
+        const projectRef = doc(db, "projects", id.toString());
+        await deleteDoc(projectRef);
+        return;
+      } catch (e) {
+        console.error("Error deleting project", e);
+        throw e;
+      }
+    }
+
+    // Fallback Mock
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const index = MOCK_PROJECTS.findIndex(p => p.id == id);
+        if (index !== -1) {
+          MOCK_PROJECTS.splice(index, 1);
+          resolve();
+        } else {
+          reject(new Error("Project not found"));
+        }
+      }, 500);
     });
   }
 }

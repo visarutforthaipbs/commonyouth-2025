@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
+import SEO from '../components/SEO';
 
 // Mock Partners Data
 const PARTNERS = [
@@ -16,6 +17,10 @@ const PARTNERS = [
 const Partners: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-12">
+      <SEO 
+        title="ภาคีเครือข่าย" 
+        description="องค์กรและภาคีเครือข่ายที่ร่วมขับเคลื่อน Commons Youth Platform"
+      />
       <div className="text-center mb-16">
         <h1 className="text-4xl font-bold text-brand-obsidian mb-4">ภาคีเครือข่าย</h1>
         <p className="text-brand-earth max-w-2xl mx-auto">
@@ -23,11 +28,11 @@ const Partners: React.FC = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {PARTNERS.map((partner) => (
           <div 
             key={partner.id} 
-            className="group bg-white p-8 rounded-2xl border-2 border-brand-obsidian hover:border-brand-bud hover:shadow-retro transition-all cursor-pointer flex flex-col items-center text-center"
+            className="group bg-white p-4 sm:p-6 md:p-8 rounded-2xl border-2 border-brand-obsidian hover:border-brand-bud hover:shadow-retro transition-all cursor-pointer flex flex-col items-center text-center"
           >
             {/* Logo Placeholder */}
             <div className="w-24 h-24 mb-6 bg-brand-linen rounded-full flex items-center justify-center border-2 border-brand-obsidian group-hover:scale-110 transition-transform">

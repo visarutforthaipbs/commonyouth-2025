@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
 import { Group, Activity } from '../types';
 import { ArrowLeft, MapPin, Mail, Globe, Tag, Calendar, Clock } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const GroupDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -43,32 +44,37 @@ const GroupDetail: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen">
+      <SEO 
+        title={group.name} 
+        description={`${group.description.substring(0, 150)}...`}
+        image={group.imageUrl}
+      />
       <button onClick={() => navigate(-1)} className="mb-6 flex items-center text-brand-earth hover:text-brand-bud">
         <ArrowLeft className="w-4 h-4 mr-2" /> ย้อนกลับ
       </button>
 
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-brand-obsidian mb-12">
-        <div className="h-64 md:h-96 relative">
+        <div className="h-48 sm:h-64 md:h-96 relative">
           <img src={group.imageUrl} alt={group.name} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           <div className="absolute bottom-6 left-6 text-white">
-            <span className="bg-brand-bud text-brand-obsidian px-3 py-1 rounded-full text-xs font-bold mb-2 inline-block">{group.province}</span>
-            <h1 className="text-3xl md:text-5xl font-bold">{group.name}</h1>
+            <span className="bg-brand-bud text-brand-obsidian px-3 py-1 rounded-full text-xs font-bold font-mono mb-2 inline-block">{group.province}</span>
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold uppercase">{group.name}</h1>
           </div>
         </div>
 
-        <div className="p-8 grid md:grid-cols-3 gap-8">
+        <div className="p-4 sm:p-6 md:p-8 grid md:grid-cols-3 gap-6 md:gap-8">
           <div className="md:col-span-2 space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-brand-obsidian mb-3">รายละเอียด</h3>
-              <p className="text-brand-earth leading-relaxed text-lg">{group.description}</p>
+              <h3 className="text-xl font-semibold text-brand-obsidian mb-3">รายละเอียด</h3>
+              <p className="text-brand-earth leading-relaxed text-body-ds">{group.description}</p>
             </div>
             
             <div>
-              <h3 className="text-xl font-bold text-brand-obsidian mb-3">ประเด็นที่ขับเคลื่อน</h3>
+              <h3 className="text-xl font-semibold text-brand-obsidian mb-3">ประเด็นที่ขับเคลื่อน</h3>
               <div className="flex flex-wrap gap-2">
                 {group.issues.map(issue => (
-                  <span key={issue} className="bg-brand-linen border-2 border-brand-bud/30 text-brand-obsidian px-3 py-1 rounded-full text-sm flex items-center">
+                  <span key={issue} className="bg-brand-linen border-2 border-brand-bud/30 text-brand-obsidian px-3 py-1 rounded-full text-sm font-mono flex items-center">
                     <Tag className="w-3 h-3 mr-2 text-brand-bud" /> {issue}
                   </span>
                 ))}
@@ -78,7 +84,7 @@ const GroupDetail: React.FC = () => {
 
           <div className="space-y-6">
             <div className="bg-brand-linen p-6 rounded-xl border-2 border-brand-obsidian">
-              <h3 className="font-bold text-brand-obsidian mb-4">ข้อมูลติดต่อ</h3>
+              <h3 className="font-semibold text-brand-obsidian mb-4">ข้อมูลติดต่อ</h3>
               <div className="space-y-3">
                 <div className="flex items-center text-brand-earth">
                   <Mail className="w-5 h-5 mr-3 text-brand-orange" />
@@ -133,7 +139,7 @@ const GroupDetail: React.FC = () => {
                                  </span>
                              </div>
                              
-                             <h3 className="font-bold text-brand-darkGreen text-lg line-clamp-1 mb-1">{activity.title}</h3>
+                             <h3 className="font-bold text-brand-obsidian text-lg line-clamp-1 mb-1">{activity.title}</h3>
                              <p className="text-xs text-brand-earth flex items-center">
                                  <MapPin className="w-3 h-3 mr-1" /> {activity.location}
                              </p>

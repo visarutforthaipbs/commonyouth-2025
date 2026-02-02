@@ -3,11 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { Activity } from '../types';
 import { Calendar as CalendarIcon, MapPin, Clock, AlertCircle, X, CheckCircle, History } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const Activities: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
-  const [filterMode, setFilterMode] = useState<'upcoming' | 'past'>('upcoming');
+  const [filterMode, setFilterMode] = useState<'all' | 'upcoming' | 'past'>('all');
 
   useEffect(() => {
     apiService.getActivities().then(setActivities);
@@ -28,31 +29,44 @@ const Activities: React.FC = () => {
   };
 
   // Filter and Sort Logic
-  const filteredActivities = activities.filter(activity => {
-      const activityDate = new Date(activity.date);
-      const now = new Date();
-      // Reset time to midnight for accurate day comparison if needed, 
-      // but simple timestamp comparison works for "Past" vs "Upcoming"
-      return filterMode === 'upcoming' ? activityDate >= now : activityDate < now;
-  }).sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      // Upcoming: Ascending (Nearest first)
-      // Past: Descending (Most recent past first)
-      return filterMode === 'upcoming' ? dateA - dateB : dateB - dateA;
-  });
+  const filteredActivities = activities
+    .filter(a => {
+        if (filterMode === 'all') return true;
+        const today = new Date();
+        const activityDate = new Date(a.date);
+        if (filterMode === 'upcoming') return activityDate >= today;
+        if (filterMode === 'past') return activityDate < today;
+        return true;
+    })
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
-    <div className="container mx-auto px-4 py-12 relative min-h-screen">
+    <div className="container mx-auto px-4 py-8">
+      <SEO 
+        title="กิจกรรม" 
+        description="รวมกิจกรรมน่าสนใจสำหรับเยาวชน การประชุม workship และงานอาสาสมัครทั่วประเทศ"
+      />
+      
+      {/* Header and Filter */}
       <div className="flex flex-col md:flex-row justify-between items-end mb-8 border-b-2 border-brand-gray pb-4">
         <div>
-            <h1 className="text-3xl font-bold text-brand-obsidian mb-2">ปฏิทินกิจกรรม</h1>
+            <h1 className="text-3xl font-bold text-brand-obsidian mb-2 uppercase">ปฏิทินกิจกรรม</h1>
             <p className="text-brand-earth">เข้าร่วมกิจกรรมที่เกิดขึ้นในชุมชนของคุณ</p>
         </div>
-        <div className="mt-4 md:mt-0 bg-white p-1 rounded-lg border border-brand-gray inline-flex">
+        <div className="mt-4 md:mt-0 bg-white p-1 rounded-lg border border-brand-gray inline-flex w-full md:w-auto justify-center">
+            <button 
+                onClick={() => setFilterMode('all')}
+                className={`flex-1 md:flex-none px-3 md:px-4 py-2 rounded-md font-medium text-xs sm:text-sm transition-all whitespace-nowrap ${
+                    filterMode === 'all' 
+                    ? 'bg-brand-obsidian text-brand-linen shadow-sm' 
+                    : 'text-brand-earth hover:bg-brand-linen'
+                }`}
+            >
+                ทั้งหมด
+            </button>
             <button 
                 onClick={() => setFilterMode('upcoming')}
-                className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
+                className={`flex-1 md:flex-none px-3 md:px-4 py-2 rounded-md font-medium text-xs sm:text-sm transition-all whitespace-nowrap ${
                     filterMode === 'upcoming' 
                     ? 'bg-brand-obsidian text-brand-linen shadow-sm' 
                     : 'text-brand-earth hover:bg-brand-linen'
@@ -62,7 +76,7 @@ const Activities: React.FC = () => {
             </button>
             <button 
                 onClick={() => setFilterMode('past')}
-                className={`px-4 py-2 rounded-md font-medium text-sm transition-all ${
+                className={`flex-1 md:flex-none px-3 md:px-4 py-2 rounded-md font-medium text-xs sm:text-sm transition-all whitespace-nowrap ${
                     filterMode === 'past' 
                     ? 'bg-brand-obsidian text-brand-linen shadow-sm' 
                     : 'text-brand-earth hover:bg-brand-linen'
@@ -90,7 +104,7 @@ const Activities: React.FC = () => {
                         {/* Date Box */}
                         <div className={`hidden md:flex flex-col items-center justify-center w-24 h-24 rounded-xl border-2 shrink-0 ${isPast ? 'bg-brand-gray/30 border-brand-gray' : 'bg-brand-linen border-brand-obsidian'}`}>
                             <span className={`text-xs font-bold uppercase ${isPast ? 'text-brand-earth' : 'text-brand-orange'}`}>{formatMonthThai(date)}</span>
-                            <span className={`text-3xl font-bold ${isPast ? 'text-brand-earth' : 'text-brand-obsidian'}`}>{date.getDate()}</span>
+                            <span className={`text-3xl font-bold font-mono ${isPast ? 'text-brand-earth' : 'text-brand-obsidian'}`}>{date.getDate()}</span>
                         </div>
 
                         {/* Content */}
@@ -99,7 +113,7 @@ const Activities: React.FC = () => {
                                 <span className={`text-xs font-bold px-2 py-1 rounded-md ${isPast ? 'bg-brand-gray text-brand-earth' : statusInfo.color}`}>
                                     {isPast ? 'จบกิจกรรมแล้ว' : statusInfo.text}
                                 </span>
-                                <span className="text-xs text-brand-earth font-medium flex items-center">
+                                <span className="text-xs text-brand-earth font-medium flex items-center font-mono">
                                     <Clock className="w-3 h-3 mr-1" /> 
                                     {date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น.
                                 </span>
@@ -160,7 +174,7 @@ const Activities: React.FC = () => {
                     onClick={() => setSelectedActivity(null)}
                     className="absolute top-4 right-4 bg-white/80 p-2 rounded-full hover:bg-white transition-colors z-10 shadow-sm"
                 >
-                    <X className="w-6 h-6 text-brand-darkGreen" />
+                    <X className="w-6 h-6 text-brand-obsidian" />
                 </button>
 
                 <div className="relative h-64">
