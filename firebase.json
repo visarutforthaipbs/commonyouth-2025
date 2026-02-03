@@ -3,7 +3,8 @@
     "rules": "firestore.rules"
   },
   "storage": {
-    "rules": "storage.rules"
+    "rules": "storage.rules",
+    "bucket": "commonsyouth.firebasestorage.app"
   },
   "hosting": {
     "public": "dist",
