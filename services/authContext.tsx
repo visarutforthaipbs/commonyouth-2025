@@ -9,7 +9,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 const USE_MOCK_AUTH = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_AUTH === 'true';
 
 // Mock User Data for Fallback (only available in development)
-const ADMIN_EMAILS = ['demo@commonsyouth.org', 'admin@commonsyouth.org', 'visarut298@gmail.com', 'jirasak.sek@gmail.com'];
+const ADMIN_EMAILS = ['demo@commonsyouth.org', 'admin@commonsyouth.org', 'visarut298@gmail.com', 'jirasak.sek@gmail.com', 'kullathida.kjk@gmail.com'];
 
 const MOCK_USER: User = {
   uid: 'mock-user-123',

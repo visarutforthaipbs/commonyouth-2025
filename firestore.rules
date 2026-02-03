@@ -11,7 +11,7 @@ service cloud.firestore {
     function isAdmin() {
       return isAuthenticated() && 
              (request.auth.token.admin == true ||
-              request.auth.token.email in ['demo@commonsyouth.org', 'admin@commonsyouth.org', 'visarut298@gmail.com', 'jirasak.sek@gmail.com']);
+              request.auth.token.email in ['demo@commonsyouth.org', 'admin@commonsyouth.org', 'visarut298@gmail.com', 'jirasak.sek@gmail.com', 'kullathida.kjk@gmail.com']);
     }
     
     function isOwner(userId) {
