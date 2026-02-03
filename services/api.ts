@@ -560,6 +560,76 @@ class ApiService {
       }, 500);
     });
   }
+
+  // ========== ADMIN METHODS ==========
+
+  // Fetch ALL groups (for admin)
+  async getAllGroups(): Promise<Group[]> {
+    if (db) {
+      try {
+        const querySnapshot = await getDocs(collection(db, "groups"));
+        const groups = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Group));
+        return groups.length > 0 ? groups : MOCK_GROUPS;
+      } catch (e) {
+        console.error("Error fetching all groups from Firestore", e);
+        return MOCK_GROUPS;
+      }
+    }
+    // Fallback Mock
+    return new Promise((resolve) => {
+      setTimeout(() => resolve([...MOCK_GROUPS]), 500);
+    });
+  }
+
+  // Fetch ALL activities (for admin)
+  async getAllActivities(): Promise<Activity[]> {
+    if (db) {
+      try {
+        const querySnapshot = await getDocs(collection(db, "activities"));
+        const firestoreActivities = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Activity));
+        return [...firestoreActivities, ...MOCK_ACTIVITIES];
+      } catch (e) {
+        console.error("Error fetching all activities from Firestore", e);
+        return [...MOCK_ACTIVITIES];
+      }
+    }
+    // Mock Fallback
+    return new Promise((resolve) => {
+      setTimeout(() => resolve([...MOCK_ACTIVITIES]), 500);
+    });
+  }
+
+  // Fetch ALL projects (for admin)
+  async getAllProjects(): Promise<Project[]> {
+    if (db) {
+      try {
+        const querySnapshot = await getDocs(collection(db, "projects"));
+        const projects = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project));
+        return projects.length > 0 ? projects : MOCK_PROJECTS;
+      } catch (e) {
+        console.error("Error fetching all projects from Firestore", e);
+        return MOCK_PROJECTS;
+      }
+    }
+    return new Promise((resolve) => {
+      setTimeout(() => resolve([...MOCK_PROJECTS]), 400);
+    });
+  }
+
+  // Toggle group visibility (for admin)
+  async toggleGroupVisibility(groupId: string, isHidden: boolean): Promise<void> {
+    return this.updateGroup(groupId, { isHidden });
+  }
+
+  // Toggle activity visibility (for admin)
+  async toggleActivityVisibility(activityId: string, isHidden: boolean): Promise<void> {
+    return this.updateActivity(activityId, { isHidden });
+  }
+
+  // Toggle project visibility (for admin)
+  async toggleProjectVisibility(projectId: string | number, isHidden: boolean): Promise<void> {
+    return this.updateProject(projectId, { isHidden });
+  }
 }
 
 export const apiService = new ApiService();

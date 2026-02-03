@@ -41,6 +41,7 @@ export interface Activity {
   groupName: string;
   description?: string;
   createdAt?: string;
+  isHidden?: boolean;
 }
 
 export interface Project {
@@ -61,6 +62,7 @@ export interface Project {
     beneficiaries: string;
   };
   createdAt?: string;
+  isHidden?: boolean;
 }
 
 export const ISSUES = [

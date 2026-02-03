@@ -4,7 +4,7 @@ import { useAuth } from '../services/authContext';
 import { apiService } from '../services/api';
 import { ISSUES, PROVINCES, Group, Activity, Project, PROJECT_CATEGORIES, PROJECT_STATUSES } from '../types';
 import { loadThaiLocations, getCoordinates, Province } from '../services/thai-data';
-import { Upload, CheckCircle, MapPin, Edit2, Edit3, PlusCircle, User as UserIcon, AlertCircle, Image as ImageIcon, X, FileImage, Trash2, AlertTriangle, Calendar, Clock } from 'lucide-react';
+import { Upload, CheckCircle, MapPin, Edit2, Edit3, PlusCircle, User as UserIcon, AlertCircle, Image as ImageIcon, X, FileImage, Trash2, AlertTriangle, Calendar, Clock, Shield, Eye, EyeOff } from 'lucide-react';
 import SEO from '../components/SEO';
 
 const Dashboard: React.FC = () => {
@@ -47,6 +47,10 @@ const Dashboard: React.FC = () => {
   // Edit Mode States
   const [editActivityMode, setEditActivityMode] = useState<string | null>(null);
   const [editProjectMode, setEditProjectMode] = useState<string | null>(null);
+
+  // Admin Mode State
+  const [adminMode, setAdminMode] = useState(false);
+  const isAdmin = user?.role === 'admin';
   
   // Profile State
   const [profileForm, setProfileForm] = useState({
@@ -116,22 +120,39 @@ const Dashboard: React.FC = () => {
   // Load user's groups on mount
   useEffect(() => {
     if (user) {
-      apiService.getUserGroups(user.uid).then(groups => {
-        setMyGroups(groups);
-        setIsLoadingGroups(false);
-      });
-      apiService.getUserActivities(user.uid).then(activities => {
-        setMyActivities(activities);
-      });
-      apiService.getUserProjects(user.uid).then(projects => {
-        setMyProjects(projects);
-      });
+      setIsLoadingGroups(true);
+      
+      // Admin mode: load ALL content, otherwise load only user's content
+      if (adminMode && isAdmin) {
+        Promise.all([
+          apiService.getAllGroups(),
+          apiService.getAllActivities(),
+          apiService.getAllProjects()
+        ]).then(([groups, activities, projects]) => {
+          setMyGroups(groups);
+          setMyActivities(activities);
+          setMyProjects(projects);
+          setIsLoadingGroups(false);
+        });
+      } else {
+        Promise.all([
+          apiService.getUserGroups(user.uid),
+          apiService.getUserActivities(user.uid),
+          apiService.getUserProjects(user.uid)
+        ]).then(([groups, activities, projects]) => {
+          setMyGroups(groups);
+          setMyActivities(activities);
+          setMyProjects(projects);
+          setIsLoadingGroups(false);
+        });
+      }
+      
       setProfileForm({
         name: user.name || '',
         bio: user.bio || ''
       });
     }
-  }, [user]);
+  }, [user, adminMode, isAdmin]);
 
   // Location Handlers
   const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -687,7 +708,9 @@ const Dashboard: React.FC = () => {
       }
 
       // Refresh list and reset
-      const updatedGroups = await apiService.getUserGroups(user.uid);
+      const updatedGroups = adminMode && isAdmin 
+        ? await apiService.getAllGroups() 
+        : await apiService.getUserGroups(user.uid);
       setMyGroups(updatedGroups);
       
       if (editMode) {
@@ -749,9 +772,25 @@ const Dashboard: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
        <SEO 
-        title="แดชบอร์ด" 
+        title={adminMode ? "แดชบอร์ดแอดมิน" : "แดชบอร์ด"}
         description="จัดการข้อมูลกลุ่ม กิจกรรม และโครงการของคุณ บนแพลตฟอร์ม Commons Youth"
        />
+
+      {/* Admin Mode Banner */}
+      {isAdmin && adminMode && (
+        <div className="lg:col-span-3 order-first bg-gradient-to-r from-brand-orange to-brand-morning p-4 rounded-xl border-2 border-brand-obsidian shadow-retro flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Shield className="w-6 h-6 text-brand-obsidian" />
+            <div>
+              <h3 className="font-bold text-brand-obsidian">โหมดแอดมิน</h3>
+              <p className="text-xs text-brand-obsidian/70">คุณกำลังดูและจัดการข้อมูลทั้งหมดในระบบ</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <span className="text-xs text-brand-obsidian/70">กลุ่ม: {myGroups.length} | กิจกรรม: {myActivities.length} | โครงการ: {myProjects.length}</span>
+          </div>
+        </div>
+      )}
       
       {/* Left Column: Profile & Group List */}
       <div className="space-y-6 md:space-y-8 order-2 lg:order-1">
@@ -793,21 +832,77 @@ const Dashboard: React.FC = () => {
                     บันทึกข้อมูลส่วนตัว
                 </button>
             </form>
+
+            {/* Admin Mode Toggle */}
+            {isAdmin && (
+              <div className="mt-6 pt-4 border-t border-brand-gray">
+                <button
+                  onClick={() => setAdminMode(!adminMode)}
+                  className={`w-full py-3 px-4 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all border-2 ${
+                    adminMode 
+                      ? 'bg-brand-orange text-white border-brand-obsidian shadow-retro' 
+                      : 'bg-white text-brand-obsidian border-brand-gray hover:border-brand-orange'
+                  }`}
+                >
+                  <Shield className="w-4 h-4" />
+                  {adminMode ? 'ปิดโหมดแอดมิน' : 'เปิดโหมดแอดมิน'}
+                </button>
+                <p className="text-xs text-brand-earth mt-2 text-center">
+                  {adminMode ? 'กำลังดูข้อมูลทั้งหมดในระบบ' : 'ดูและจัดการข้อมูลทุกกลุ่ม/กิจกรรม/โครงการ'}
+                </p>
+              </div>
+            )}
         </div>
 
         {/* My Groups List */}
         <div className="bg-white rounded-2xl shadow-sm border border-brand-gray p-6">
-            <h2 className="text-xl font-bold text-brand-obsidian mb-4">กลุ่มของฉัน</h2>
+            <h2 className="text-xl font-bold text-brand-obsidian mb-4 flex items-center justify-between">
+              <span>{adminMode ? 'กลุ่มทั้งหมด' : 'กลุ่มของฉัน'}</span>
+              {adminMode && <span className="text-xs font-normal bg-brand-orange text-white px-2 py-1 rounded-full">{myGroups.length}</span>}
+            </h2>
             {isLoadingGroups ? (
                 <div className="text-center text-brand-earth py-4">กำลังโหลด...</div>
             ) : myGroups.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-[400px] overflow-y-auto">
                     {myGroups.map(group => (
-                        <div key={group.id} className="p-3 border border-brand-gray rounded-lg hover:border-brand-bud transition-colors bg-brand-linen/30">
-                            <h3 className="font-bold text-brand-obsidian text-sm mb-1">{group.name}</h3>
-                            <div className="flex justify-between items-center">
+                        <div key={group.id} className={`p-3 border border-brand-gray rounded-lg hover:border-brand-bud transition-colors ${group.isHidden ? 'bg-gray-100 opacity-75' : 'bg-brand-linen/30'}`}>
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-brand-obsidian text-sm mb-1 truncate">{group.name}</h3>
+                                {adminMode && group.ownerId !== user?.uid && (
+                                  <span className="text-[10px] bg-brand-ocean/20 text-brand-ocean px-1.5 py-0.5 rounded-full">ของผู้อื่น</span>
+                                )}
+                              </div>
+                              {group.isHidden && (
+                                <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full whitespace-nowrap">ซ่อน</span>
+                              )}
+                            </div>
+                            <div className="flex justify-between items-center mt-2">
                                 <span className="text-xs text-brand-earth">{group.province}</span>
-                                <div className="flex gap-2">
+                                <div className="flex gap-1">
+                                    {/* Visibility Toggle (Admin Only) */}
+                                    {adminMode && (
+                                      <button
+                                        onClick={async () => {
+                                          try {
+                                            await apiService.toggleGroupVisibility(group.id, !group.isHidden);
+                                            setMyGroups(prev => prev.map(g => 
+                                              g.id === group.id ? { ...g, isHidden: !g.isHidden } : g
+                                            ));
+                                          } catch (e) {
+                                            alert('เกิดข้อผิดพลาดในการเปลี่ยนสถานะ');
+                                          }
+                                        }}
+                                        className={`text-xs flex items-center px-2 py-1 border rounded-md transition-colors ${
+                                          group.isHidden 
+                                            ? 'border-green-500 text-green-600 hover:bg-green-500 hover:text-white' 
+                                            : 'border-gray-400 text-gray-500 hover:bg-gray-500 hover:text-white'
+                                        }`}
+                                        title={group.isHidden ? 'แสดงกลุ่ม' : 'ซ่อนกลุ่ม'}
+                                      >
+                                        {group.isHidden ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                                      </button>
+                                    )}
                                     <button 
                                         onClick={() => startEditing(group)}
                                         className="text-xs flex items-center px-2 py-1 border border-brand-orange text-brand-orange font-bold rounded-md hover:bg-brand-orange hover:text-white transition-colors"
@@ -828,7 +923,7 @@ const Dashboard: React.FC = () => {
                 </div>
             ) : (
                 <div className="text-center py-6 text-brand-earth text-sm bg-brand-linen rounded-lg border-dashed border border-brand-gray">
-                    คุณยังไม่ได้สร้างกลุ่ม
+                    {adminMode ? 'ยังไม่มีกลุ่มในระบบ' : 'คุณยังไม่ได้สร้างกลุ่ม'}
                 </div>
             )}
             <button 
@@ -1317,14 +1412,25 @@ const Dashboard: React.FC = () => {
                     {/* My Activities List */}
                     {myActivities.length > 0 && (
                         <div className="mt-8 pt-8 border-t border-brand-gray">
-                            <h3 className="text-lg font-bold text-brand-obsidian mb-4">กิจกรรมของฉัน</h3>
-                            <div className="space-y-3">
+                            <h3 className="text-lg font-bold text-brand-obsidian mb-4 flex items-center justify-between">
+                              <span>{adminMode ? 'กิจกรรมทั้งหมด' : 'กิจกรรมของฉัน'}</span>
+                              {adminMode && <span className="text-xs font-normal bg-brand-ocean text-white px-2 py-1 rounded-full">{myActivities.length}</span>}
+                            </h3>
+                            <div className="space-y-3 max-h-[500px] overflow-y-auto">
                                 {myActivities.map(activity => (
-                                    <div key={activity.id} className={`p-4 border rounded-lg hover:border-brand-bud transition-colors bg-brand-linen/30 ${editActivityMode === activity.id ? 'border-brand-bud ring-2 ring-brand-bud/20' : 'border-brand-gray'}`}>
+                                    <div key={activity.id} className={`p-4 border rounded-lg hover:border-brand-bud transition-colors ${activity.isHidden ? 'bg-gray-100 opacity-75' : 'bg-brand-linen/30'} ${editActivityMode === activity.id ? 'border-brand-bud ring-2 ring-brand-bud/20' : 'border-brand-gray'}`}>
                                         <div className="flex justify-between items-start">
                                             <div className="flex-1">
-                                                <h4 className="font-bold text-brand-obsidian mb-1">{activity.title}</h4>
-                                                <p className="text-xs text-brand-earth mb-2">{activity.groupName}</p>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                  <h4 className="font-bold text-brand-obsidian">{activity.title}</h4>
+                                                  {activity.isHidden && <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">ซ่อน</span>}
+                                                </div>
+                                                <p className="text-xs text-brand-earth mb-2">
+                                                  {activity.groupName}
+                                                  {adminMode && activity.ownerId !== user?.uid && (
+                                                    <span className="ml-2 text-[10px] bg-brand-ocean/20 text-brand-ocean px-1.5 py-0.5 rounded-full">ของผู้อื่น</span>
+                                                  )}
+                                                </p>
                                                 <div className="flex items-center gap-3 text-xs text-brand-earth">
                                                     <span className="flex items-center">
                                                         <Calendar className="w-3 h-3 mr-1" />
@@ -1351,6 +1457,30 @@ const Dashboard: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="flex gap-2 mt-3 pt-3 border-t border-brand-gray/50">
+                                            {/* Visibility Toggle (Admin Only) */}
+                                            {adminMode && (
+                                              <button
+                                                onClick={async () => {
+                                                  try {
+                                                    await apiService.toggleActivityVisibility(activity.id, !activity.isHidden);
+                                                    setMyActivities(prev => prev.map(a => 
+                                                      a.id === activity.id ? { ...a, isHidden: !a.isHidden } : a
+                                                    ));
+                                                  } catch (e) {
+                                                    alert('เกิดข้อผิดพลาดในการเปลี่ยนสถานะ');
+                                                  }
+                                                }}
+                                                className={`text-xs flex items-center px-2 py-1 border rounded-md transition-colors ${
+                                                  activity.isHidden 
+                                                    ? 'border-green-500 text-green-600 hover:bg-green-500 hover:text-white' 
+                                                    : 'border-gray-400 text-gray-500 hover:bg-gray-500 hover:text-white'
+                                                }`}
+                                                title={activity.isHidden ? 'แสดงกิจกรรม' : 'ซ่อนกิจกรรม'}
+                                              >
+                                                {activity.isHidden ? <Eye className="w-3 h-3 mr-1" /> : <EyeOff className="w-3 h-3 mr-1" />}
+                                                {activity.isHidden ? 'แสดง' : 'ซ่อน'}
+                                              </button>
+                                            )}
                                             <button
                                                 onClick={() => startEditingActivity(activity)}
                                                 className="text-xs flex items-center px-2 py-1 border border-brand-orange text-brand-orange font-bold rounded-md hover:bg-brand-orange hover:text-white transition-colors"
@@ -1736,10 +1866,13 @@ const Dashboard: React.FC = () => {
                     {/* My Projects List */}
                     {myProjects.length > 0 && (
                         <div className="mt-8 pt-8 border-t border-brand-gray">
-                            <h3 className="text-lg font-bold text-brand-obsidian mb-4">โครงการของฉัน</h3>
-                            <div className="space-y-3">
+                            <h3 className="text-lg font-bold text-brand-obsidian mb-4 flex items-center justify-between">
+                              <span>{adminMode ? 'โครงการทั้งหมด' : 'โครงการของฉัน'}</span>
+                              {adminMode && <span className="text-xs font-normal bg-brand-bud text-brand-obsidian px-2 py-1 rounded-full">{myProjects.length}</span>}
+                            </h3>
+                            <div className="space-y-3 max-h-[500px] overflow-y-auto">
                                 {myProjects.map(project => (
-                                    <div key={project.id} className="p-4 border border-brand-gray rounded-lg hover:border-brand-ocean transition-colors bg-brand-linen/30">
+                                    <div key={project.id} className={`p-4 border rounded-lg hover:border-brand-ocean transition-colors ${project.isHidden ? 'bg-gray-100 opacity-75' : 'bg-brand-linen/30'} border-brand-gray`}>
                                         <div className="flex justify-between items-start">
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2 mb-1">
@@ -1751,7 +1884,11 @@ const Dashboard: React.FC = () => {
                                                     }`}>
                                                         {project.projectStatus === 'completed' ? 'เสร็จสิ้นแล้ว' : 'กำลังดำเนินการ'}
                                                     </span>
+                                                    {project.isHidden && <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">ซ่อน</span>}
                                                 </div>
+                                                {adminMode && project.ownerId !== user?.uid && (
+                                                  <span className="text-[10px] bg-brand-ocean/20 text-brand-ocean px-1.5 py-0.5 rounded-full mb-2 inline-block">ของผู้อื่น</span>
+                                                )}
                                                 <div className="flex items-center gap-3 text-xs text-brand-earth mb-2">
                                                     <span className="flex items-center">
                                                         <MapPin className="w-3 h-3 mr-1" />
@@ -1768,6 +1905,29 @@ const Dashboard: React.FC = () => {
                                                 <span className="text-xs font-bold px-2 py-1 rounded bg-brand-ocean/10 text-brand-ocean">
                                                     {project.category}
                                                 </span>
+                                                {/* Visibility Toggle (Admin Only) */}
+                                                {adminMode && (
+                                                  <button
+                                                    onClick={async () => {
+                                                      try {
+                                                        await apiService.toggleProjectVisibility(project.id, !project.isHidden);
+                                                        setMyProjects(prev => prev.map(p => 
+                                                          p.id === project.id ? { ...p, isHidden: !p.isHidden } : p
+                                                        ));
+                                                      } catch (e) {
+                                                        alert('เกิดข้อผิดพลาดในการเปลี่ยนสถานะ');
+                                                      }
+                                                    }}
+                                                    className={`p-1.5 rounded transition-colors ${
+                                                      project.isHidden 
+                                                        ? 'text-green-600 hover:bg-green-50' 
+                                                        : 'text-gray-400 hover:bg-gray-100'
+                                                    }`}
+                                                    title={project.isHidden ? 'แสดงโครงการ' : 'ซ่อนโครงการ'}
+                                                  >
+                                                    {project.isHidden ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                                                  </button>
+                                                )}
                                                 <button
                                                     onClick={() => startEditingProject(project)}
                                                     className="p-1.5 text-brand-earth hover:text-brand-ocean hover:bg-brand-ocean/10 rounded transition-colors"
