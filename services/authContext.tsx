@@ -5,7 +5,10 @@ import { auth, googleProvider, db } from './firebase';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-// Mock User Data for Fallback
+// Environment configuration
+const USE_MOCK_AUTH = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_AUTH === 'true';
+
+// Mock User Data for Fallback (only available in development)
 const ADMIN_EMAILS = ['demo@commonsyouth.org', 'admin@commonsyouth.org'];
 
 const MOCK_USER: User = {
@@ -36,14 +39,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (auth) {
       const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: any) => {
         if (firebaseUser) {
-          // 1. Basic info from Google Auth
+          // Force token refresh to get latest custom claims
+          const idTokenResult = await firebaseUser.getIdTokenResult();
+          
+          // 1. Basic info from Google Auth with custom claims for role
           let userProfile: User = {
             uid: firebaseUser.uid,
             email: firebaseUser.email || '',
             name: firebaseUser.displayName || 'User',
             profileImage: firebaseUser.photoURL || undefined,
             bio: '',
-            role: (firebaseUser.email && ADMIN_EMAILS.includes(firebaseUser.email)) ? 'admin' : 'user'
+            // Use custom claim if available, fallback to email check for compatibility
+            role: idTokenResult.claims.admin === true ? 'admin' : 
+                  (firebaseUser.email && ADMIN_EMAILS.includes(firebaseUser.email)) ? 'admin' : 'user'
           };
 
           // 2. Fetch extended info (Bio) from Firestore if available
@@ -71,12 +79,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return () => unsubscribe();
     } 
     
-    // MOCK MODE
-    else {
+    // MOCK MODE (only in development with explicit flag)
+    else if (USE_MOCK_AUTH) {
       const storedUser = localStorage.getItem('cyp_mock_user');
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
+      setLoading(false);
+    } else {
+      // No auth available and mock disabled
       setLoading(false);
     }
   }, []);
@@ -106,7 +117,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
       }
     } else {
-      // Mock Login Fallback
+      // Mock Login Fallback (only in development)
+      if (!USE_MOCK_AUTH) {
+        throw new Error('Mock authentication is disabled. Please configure Firebase or enable VITE_USE_MOCK_AUTH in development.');
+      }
       await new Promise(resolve => setTimeout(resolve, 1000));
       setUser(MOCK_USER);
       localStorage.setItem('cyp_mock_user', JSON.stringify(MOCK_USER));
@@ -119,8 +133,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (auth) {
       await signOut(auth);
-    } else {
-      // Mock Logout
+    } else if (USE_MOCK_AUTH) {
+      // Mock Logout (only in development)
       await new Promise(resolve => setTimeout(resolve, 500));
       setUser(null);
       localStorage.removeItem('cyp_mock_user');

@@ -185,12 +185,12 @@ const Projects: React.FC = () => {
                     className="w-full h-64 md:h-80 object-cover transition-transform duration-500 group-hover:scale-105" 
                   />
                   <div className="absolute top-4 left-4 flex gap-2">
-                    <span className="bg-brand-linen px-3 py-1 rounded-full text-xs font-bold font-mono border border-brand-obsidian">
+                    <span className="bg-brand-linen px-3 py-1 rounded-md text-xs font-bold border border-brand-obsidian">
                       {project.category}
                     </span>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold font-mono ${
+                    <span className={`px-3 py-1 rounded-md text-xs font-bold ${
                       project.projectStatus === 'completed'
-                        ? 'bg-brand-ocean text-white'
+                        ? 'bg-brand-ocean text-white border border-brand-obsidian'
                         : 'bg-brand-bud text-brand-obsidian border border-brand-obsidian'
                     }`}>
                       {project.projectStatus === 'completed' ? 'เสร็จสิ้นแล้ว' : 'กำลังดำเนินการ'}

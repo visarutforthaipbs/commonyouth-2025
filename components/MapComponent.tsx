@@ -258,8 +258,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ groups, selectedProvince, o
         style={{ backgroundColor: '#A6D1E6' }} // Ocean color matching map
       ></svg>
       
-      {/* Legend */}
-      <div className="absolute bottom-4 right-4 bg-white p-3 rounded-lg border-2 border-brand-obsidian shadow-retro-sm z-[100] max-w-xs">
+      {/* Legend - hidden on mobile */}
+      <div className="hidden md:block absolute bottom-4 right-4 bg-white p-3 rounded-lg border-2 border-brand-obsidian shadow-retro-sm z-[100] max-w-xs">
         <h4 className="font-bold text-xs mb-2 text-brand-obsidian">คำอธิบาย</h4>
         
         {/* Province colors */}

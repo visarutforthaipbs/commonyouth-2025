@@ -180,7 +180,7 @@ const Activities: React.FC = () => {
                 <div className="relative h-64">
                      <img src={selectedActivity.imageUrl} alt={selectedActivity.title} className={`w-full h-full object-cover ${new Date(selectedActivity.date) < new Date() ? 'grayscale' : ''}`} />
                      <div className="absolute bottom-4 left-4">
-                         <span className={`text-xs font-bold px-3 py-1 rounded-full ${new Date(selectedActivity.date) < new Date() ? 'bg-brand-earth text-white' : getStatusDisplay(selectedActivity.status).color}`}>
+                         <span className={`text-xs font-bold px-3 py-1 rounded-md border border-brand-obsidian ${new Date(selectedActivity.date) < new Date() ? 'bg-brand-earth text-white' : getStatusDisplay(selectedActivity.status).color}`}>
                             {new Date(selectedActivity.date) < new Date() ? 'จบกิจกรรมแล้ว' : getStatusDisplay(selectedActivity.status).text}
                          </span>
                      </div>

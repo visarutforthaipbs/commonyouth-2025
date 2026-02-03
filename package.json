@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "audit": "npm audit --audit-level=moderate",
+    "audit:fix": "npm audit fix",
+    "security": "npm run type-check && npm run audit"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -25,7 +29,10 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.18",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^22.14.0",
+    "@types/react": "^19.2.10",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.24",
     "postcss": "^8.5.6",

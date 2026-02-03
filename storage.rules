@@ -2,8 +2,65 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return request.auth != null && 
+             (request.auth.token.admin == true ||
+              request.auth.token.email in ['demo@commonsyouth.org', 'admin@commonsyouth.org']);
+    }
+    
+    function isValidImageFile() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    function isValidSize() {
+      // Max 5MB
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+    
+    // Group images - user can only upload to their own path
+    match /groups/{userId}/{fileName} {
+      allow read: if true; // Public read for group images
+      allow write: if isAuthenticated() && 
+                      request.auth.uid == userId &&
+                      isValidImageFile() &&
+                      isValidSize();
+    }
+    
+    // Activity images - admin only
+    match /activities/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() &&
+                     isValidImageFile() &&
+                     isValidSize();
+    }
+    
+    // Project images - owner or admin
+    match /projects/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if (isAuthenticated() && request.auth.uid == userId) ||
+                     isAdmin() &&
+                     isValidImageFile() &&
+                     isValidSize();
+    }
+    
+    // User profile images
+    match /users/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated() && 
+                      request.auth.uid == userId &&
+                      isValidImageFile() &&
+                      isValidSize();
+    }
+    
+    // Deny all other paths
     match /{allPaths=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if false;
     }
   }
 }

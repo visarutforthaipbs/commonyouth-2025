@@ -28,7 +28,7 @@ const Home: React.FC = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-64 bg-brand-orange/3 rotate-12 blur-3xl -z-10"></div>
 
         <div className="container mx-auto text-center relative z-10">
-          <span className="inline-block py-1 px-3 rounded-full bg-brand-morning/40 text-brand-obsidian text-xs font-mono font-bold uppercase tracking-wider mb-4 border border-brand-obsidian/20">
+          <span className="inline-block py-1 px-3 rounded-md bg-brand-morning/40 text-brand-obsidian text-xs font-bold uppercase tracking-wider mb-4 border border-brand-obsidian">
             พื้นที่พลังพลเมือง
           </span>
           <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-brand-obsidian mb-6 leading-none sm:leading-tight tracking-tight uppercase">

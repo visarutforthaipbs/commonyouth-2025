@@ -58,7 +58,7 @@ const GroupDetail: React.FC = () => {
           <img src={group.imageUrl} alt={group.name} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           <div className="absolute bottom-6 left-6 text-white">
-            <span className="bg-brand-bud text-brand-obsidian px-3 py-1 rounded-full text-xs font-bold font-mono mb-2 inline-block">{group.province}</span>
+            <span className="bg-brand-bud text-brand-obsidian px-3 py-1 rounded-md text-xs font-bold mb-2 inline-block border border-brand-obsidian">{group.province}</span>
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold uppercase">{group.name}</h1>
           </div>
         </div>

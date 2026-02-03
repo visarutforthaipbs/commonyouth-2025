@@ -71,7 +71,7 @@ const Community: React.FC = () => {
             {/* Content */}
             <div className="relative h-40 overflow-hidden bg-gray-100 group">
                 <img src={group.imageUrl} alt={group.name} className={`w-full h-full object-cover ${group.isHidden ? 'grayscale' : ''}`} />
-                <div className="absolute bottom-0 left-0 bg-brand-obsidian text-white px-3 py-1 text-xs font-bold rounded-tr-lg z-10">
+                <div className="absolute bottom-0 left-0 bg-brand-bud text-brand-obsidian px-3 py-1 text-xs font-bold rounded-md border border-brand-obsidian z-10 m-2">
                     {group.province}
                 </div>
                 

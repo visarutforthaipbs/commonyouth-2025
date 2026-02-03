@@ -62,13 +62,13 @@ const ProjectDetail: React.FC = () => {
             {/* Title Section */}
             <div className="p-4 sm:p-6 md:p-8 border-b border-brand-gray">
                 <div className="flex flex-wrap gap-3 mb-4">
-                    <span className="bg-brand-orange text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <span className="bg-brand-orange text-white px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider border border-brand-obsidian">
                         {project.category}
                     </span>
-                    <span className="bg-brand-linen border border-brand-gray text-brand-obsidian px-3 py-1 rounded-full text-xs font-bold flex items-center">
+                    <span className="bg-brand-linen border border-brand-obsidian text-brand-obsidian px-3 py-1 rounded-md text-xs font-bold flex items-center">
                         <MapPin className="w-3 h-3 mr-1" /> {project.location}
                     </span>
-                    <span className="bg-brand-linen border border-brand-gray text-brand-obsidian px-3 py-1 rounded-full text-xs font-bold flex items-center">
+                    <span className="bg-brand-linen border border-brand-obsidian text-brand-obsidian px-3 py-1 rounded-md text-xs font-bold flex items-center">
                         <Calendar className="w-3 h-3 mr-1" /> {project.date}
                     </span>
                 </div>

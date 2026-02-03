@@ -1776,7 +1776,7 @@ const Dashboard: React.FC = () => {
                                                     <Edit3 className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeleteProject(project.id!)}
+                                                    onClick={() => handleDeleteProject(String(project.id!))}
                                                     className="p-1.5 text-brand-earth hover:text-red-500 hover:bg-red-50 rounded transition-colors"
                                                     title="ลบโครงการ"
                                                 >
