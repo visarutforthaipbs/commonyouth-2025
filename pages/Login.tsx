@@ -5,8 +5,14 @@ import { Chrome } from 'lucide-react';
 import SEO from '../components/SEO';
 
 const Login: React.FC = () => {
-  const { loginWithGoogle, loading } = useAuth();
+  const { loginWithGoogle, loading, user } = useAuth();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleGoogleLogin = async () => {
     try {
